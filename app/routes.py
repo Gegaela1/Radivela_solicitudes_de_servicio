@@ -145,3 +145,107 @@ def staff(db: DB, actor: Actor):
         select(User).where(User.activo.is_(True)).order_by(User.nombre, User.id)
     ) if "atencion" in user.roles]
 
+
+from uuid import uuid4
+
+from pydantic import Field
+from sqlalchemy import DateTime, ForeignKey, Integer, func, update
+
+
+def now():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+class Service(Base):
+    __tablename__ = "servicio"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str] = mapped_column(String, unique=True)
+    disponible: Mapped[bool] = mapped_column(default=True)
+    prioridad: Mapped[str] = mapped_column(String, default="Normal")
+    dias: Mapped[int] = mapped_column(default=7)
+
+
+class Case(Base):
+    __tablename__ = "solicitud"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    radicado: Mapped[str] = mapped_column(String, unique=True)
+    titular: Mapped[int] = mapped_column(ForeignKey("usuario.id"), index=True)
+    servicio_id: Mapped[int] = mapped_column(ForeignKey("servicio.id"))
+    nombre: Mapped[str] = mapped_column(String)
+    documento: Mapped[str] = mapped_column(String)
+    correo: Mapped[str] = mapped_column(String)
+    asunto: Mapped[str] = mapped_column(String)
+    descripcion: Mapped[str] = mapped_column(String)
+    estado: Mapped[str] = mapped_column(String, default="Recibida")
+    creada: Mapped[datetime] = mapped_column(DateTime, default=now)
+    cerrada: Mapped[datetime | None] = mapped_column(DateTime)
+    gestor: Mapped[int | None] = mapped_column(ForeignKey("usuario.id"))
+    responsable: Mapped[int | None] = mapped_column(ForeignKey("usuario.id"))
+    principal: Mapped[int | None] = mapped_column(ForeignKey("solicitud.id"))
+    version: Mapped[int] = mapped_column(default=1)
+    prioridad: Mapped[str] = mapped_column(String)
+    dias: Mapped[int] = mapped_column(Integer)
+
+
+class Event(Base):
+    __tablename__ = "evento"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    caso: Mapped[int] = mapped_column(ForeignKey("solicitud.id"), index=True)
+    autor: Mapped[int] = mapped_column(ForeignKey("usuario.id"))
+    tipo: Mapped[str] = mapped_column(String)
+    fecha: Mapped[datetime] = mapped_column(DateTime, default=now)
+    motivo: Mapped[str | None] = mapped_column(String)
+    visible: Mapped[bool] = mapped_column(default=True)
+
+
+class Submission(Input):
+    nombre: Name
+    documento: Code
+    correo: EmailStr
+    servicio_id: int = Field(gt=0)
+    asunto: Name
+    descripcion: Message
+
+
+def catalog_item(db, service_id, allow_other=True):
+    item = db.get(Service, service_id)
+    if not item or not item.disponible or (not allow_other and item.nombre == "Otro servicio"):
+        raise HTTPException(422, "Seleccione un servicio disponible")
+    return item
+
+
+def event(db, case, actor, kind, reason=None, visible=True):
+    item = Event(caso=case.id, autor=actor.id, tipo=kind, motivo=reason, visible=visible)
+    db.add(item)
+    return item
+
+
+def stamp(value):
+    return value.replace(tzinfo=timezone.utc).isoformat() if value else None
+
+
+def summary(case):
+    return {**{key: getattr(case, key) for key in (
+        "radicado", "servicio_id", "asunto", "estado", "version", "gestor",
+        "responsable", "prioridad", "dias",
+    )}, "creada": stamp(case.creada), "cerrada": stamp(case.cerrada)}
+
+
+@api.post("/solicitudes", status_code=201)
+def submit(data: Submission, db: DB, actor: Actor):
+    require(actor, "solicitante")
+    item = catalog_item(db, data.servicio_id)
+    case = Case(**data.model_dump(), titular=actor.id, prioridad=item.prioridad, dias=item.dias,
+                radicado=f"RAD-{now().year}-{uuid4().hex[:16].upper()}")
+    db.add(case)
+    db.flush()
+    event(db, case, actor, "Radicación")
+    db.commit()
+    return summary(case)
+
+
+@api.get("/servicios")
+def services(db: DB, actor: Actor):
+    return [{"id": item.id, "nombre": item.nombre, "prioridad": item.prioridad, "dias": item.dias}
+            for item in db.scalars(select(Service).where(Service.disponible).order_by(Service.id))]
+
