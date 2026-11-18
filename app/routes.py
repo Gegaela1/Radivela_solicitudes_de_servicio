@@ -740,3 +740,39 @@ def resolve(reopening_id: int, data: Resolution, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+ACTIVE_STATES = ("Recibida", "En revisión", "En espera de información", "Aceptada", "En atención")
+
+
+class Duplicate(ReopenInput):
+    principal: Code
+
+
+def can_mark_duplicate(case, actor):
+    return "coordinacion" in actor.roles or (
+        "atencion" in actor.roles and actor.id == (case.responsable or case.gestor)
+    )
+
+
+@api.post("/solicitudes/{radicado}/duplicado")
+def duplicate(radicado: str, data: Duplicate, db: DB, actor: Actor):
+    require(actor, "atencion", "coordinacion")
+    case = allowed_case(db, actor, radicado)
+    if not can_mark_duplicate(case, actor):
+        raise HTTPException(403, "Solo coordinación o la persona a cargo puede cerrar el duplicado")
+    principal = find_case(db, data.principal)
+    if principal.titular != case.titular:
+        raise HTTPException(404, "Solicitud principal no encontrada")
+    if principal.id == case.id or principal.estado == "Cerrada por duplicado":
+        raise HTTPException(422, "Seleccione una solicitud principal distinta y válida")
+    if db.scalar(select(Case.id).where(Case.principal == case.id).limit(1)):
+        raise HTTPException(409, "La solicitud ya es principal de otro caso")
+    transition(db, case, data.version, ACTIVE_STATES,
+               {"estado": "Cerrada por duplicado", "principal": principal.id, "cerrada": now()})
+    pending = open_request(db, case)
+    if pending:
+        pending.abierta = False
+    event(db, case, actor, "Cierre por duplicado", f"{principal.radicado} · {data.motivo}")
+    db.commit()
+    return detail(db, case, actor)
+
