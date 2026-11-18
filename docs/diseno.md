@@ -2,7 +2,7 @@
 
 ## Arquitectura
 
-FastAPI sirve HTML, CSS, JavaScript y la API REST en el mismo origen. Pydantic valida contratos. SQLAlchemy y Alembic gestionan SQLite. La API autentica con JWT, verifica cuenta activa, rol y relación con el recurso. Usar contraseñas con Argon2, secretos por entorno y documentación OpenAPI. Mantener los PDF en almacenamiento privado y entregar archivos únicamente tras comprobar permisos.
+Elegí FastAPI para servir el frontend HTML, CSS y JavaScript y la API REST desde el mismo origen. Pydantic valida contratos. SQLAlchemy y Alembic gestionan SQLite. La API autentica con JWT, verifica cuenta activa, rol y relación con el recurso. Usar contraseñas con Argon2, secretos por entorno y documentación OpenAPI. Mantener los PDF en almacenamiento privado y entregar archivos únicamente tras comprobar permisos.
 
 ```mermaid
 flowchart LR

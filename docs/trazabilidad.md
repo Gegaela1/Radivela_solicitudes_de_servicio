@@ -4,17 +4,17 @@
 
 | Imagen | Exigencia | Estado |
 |---|---|---|
-| A1 | Completar análisis, requisitos, diseño, desarrollo, Git, pruebas y trazabilidad | Las siete etapas quedan registradas aquí. |
-| A2 | Describir problema, alcance, actores, responsabilidades, proceso y CA-01 a CA-06 | El levantamiento contiene el proceso y los actores. Aquí se explicita el cruce con los seis códigos de la guía. |
-| A3 | Entrevista, reglas, criterios acordados y `docs/requisitos.md` | Hay respuestas registradas y matriz RF/RNF. La especificación está en docs/requisitos.md. Registrar la aprobación académica cuando se obtenga. |
-| A4 | `docs/diseno.md`, interfaces, diagramas, endpoints, validaciones, relaciones y especificación API | El diseño incluye diagramas, modelo, contratos y especificación de vistas. Los prototipos navegables y la validación visual se realizan al construir la interfaz. |
-| A5 | Frontend conectado a API REST, operaciones justificadas, validaciones, persistencia, reglas e instalación reproducible | El escenario G12 verifica la aplicación ejecutable. Usar transiciones para cancelación y duplicados, conservando sus registros. |
-| A6 | Rama, commits descriptivos, PR, historial y aportes identificables | Hay ramas propuestas. Cada RF debe tener su rama y PR hacia `main`, con commits de cambios reales, pruebas y revisión del diff. Conservar enlaces y aportes individuales verificables. |
+| A1 | Completar análisis, requisitos, diseño, desarrollo, Git, pruebas y trazabilidad | Registré las siete etapas en esta matriz. |
+| A2 | Describir problema, alcance, actores, responsabilidades, proceso y CA-01 a CA-06 | Documenté el proceso y los actores y los relacioné con los seis criterios de la guía. |
+| A3 | Entrevista, reglas, criterios acordados y `docs/requisitos.md` | Registré la [entrevista](../evidencias/entrevista/README.md) y documenté los criterios en la [especificación](requisitos.md). |
+| A4 | `docs/diseno.md`, interfaces, diagramas, endpoints, validaciones, relaciones y especificación API | Documenté los diagramas, el modelo, los contratos y las vistas. Verifiqué la interfaz con el recorrido de navegador. |
+| A5 | Frontend conectado a API REST, operaciones justificadas, validaciones, persistencia, reglas e instalación reproducible | Comprobé la aplicación ejecutable en G12. Implementé la cancelación y el cierre de duplicados como transiciones que conservan sus registros. |
+| A6 | Rama, commits descriptivos, PR, historial y aportes identificables | Organicé los 18 requisitos en ramas y commits locales. Registraré los enlaces de los PR cuando los publique en GitHub. |
 | A7 | Ejecutar los 12 escenarios de la guía y documentar HTTP, entradas, resultados y evidencias | Los identificadores PF del levantamiento representan pruebas por RF. La tabla de este documento enumera por separado los 12 escenarios obligatorios y su cobertura. |
 | A8 | `docs/trazabilidad.md` con cadena CA → RF → código → PR → prueba | El levantamiento tiene un cruce de negocio preliminar. Los seis códigos están incluidos. Incorporar los enlaces reales al implementar. |
 | A9 | Ejemplo completo de trazabilidad y demostración del flujo, pruebas y aportes | Los identificadores de la imagen son ilustrativos. En este proyecto, radicar es RF-04. Registrar las rutas, PR y pruebas que efectivamente correspondan. |
-| A10 | Sustentación con distribución exacta de 20 minutos | Guion registrado abajo. El [guion](demo.md) acompaña la presentación. El recorrido funcional se ejecutó en navegador. |
-| A11 | Aplicación en vivo, caso completo, decisiones, pruebas, GitHub, presentación PDF/PPT y repositorio ejecutable | Se prepararon el repositorio, la presentación y las evidencias del caso en navegador. La estudiante cubre todos los bloques del trabajo individual. |
+| A10 | Sustentación con distribución exacta de 20 minutos | Preparé el [guion](demo.md) para la presentación y ejecuté el recorrido funcional en el navegador. |
+| A11 | Aplicación en vivo, caso completo, decisiones, pruebas, GitHub, presentación PDF/PPT y repositorio ejecutable | Preparé el repositorio, la presentación y las evidencias del caso en navegador para mi sustentación individual. |
 
 ## Correspondencia para docs/trazabilidad.md
 
@@ -83,4 +83,4 @@ WhatsApp figura como RF-19 opcional. Los seis criterios obligatorios se comprueb
 
 La implementación de los contratos de la matriz está en [app/routes.py](../app/routes.py). Las vistas que llaman a esos contratos están en [app/web/portal.js](../app/web/portal.js). [Pruebas de Radivela](pruebas.md) enlaza las evidencias de los escenarios G01 a G12 y PF-01 a PF-18.
 
-Cada rama de la matriz apunta al commit que incorpora el requisito. Los campos de PR quedan pendientes hasta su publicación en el [repositorio confirmado](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio). La aprobación académica se registra cuando la organización la confirme.
+Cada rama de la matriz apunta al commit que incorpora el requisito. Los campos de PR quedan pendientes hasta su publicación en el [repositorio confirmado](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio).

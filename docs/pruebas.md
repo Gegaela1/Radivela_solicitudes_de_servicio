@@ -1,6 +1,6 @@
 # Pruebas de Radivela
 
-`python -m pytest -q -s` migra una base SQLite temporal y ejecuta los escenarios HTTP con cuentas ficticias. El código de los casos conserva las entradas completas, precondiciones y aserciones. La salida de ejecución se conserva en [evidencia HTTP](evidencia-http.txt).
+`python -m pytest -q -s` migra una base SQLite temporal y ejecuta los escenarios HTTP con cuentas ficticias. Dejé las entradas completas, las precondiciones y las aserciones en el código de prueba. Guardé la salida de ejecución en [evidencia HTTP](../evidencias/evidencia-http.txt).
 
 ## Guía de integración
 
@@ -17,7 +17,7 @@
 | G09 | Responsable adjunta el certificado y finaliza | POST 200. GET 200 con la respuesta en el detalle |
 | G10 | Coordinación combina estado, servicio y prioridad | GET 200. Un resultado filtrado y cuatro en el consolidado |
 | G11 | Se reinicia Uvicorn y se consulta la misma base | GET 200 para el caso y el PDF. La verificación de claves foráneas devuelve cero infracciones |
-| G12 | Tres sesiones de navegador tramitan el certificado | Radicación 201, cierre sin PDF 422, cierre válido y descarga 200. El caso aparece en supervisión. [Registro HTTP](evidencia-navegador.txt) y [captura del detalle](evidencia-g12.png) y [captura del listado](evidencia-listado.png) |
+| G12 | Tres sesiones de navegador tramitan el certificado | Radicación 201, cierre sin PDF 422, cierre válido y descarga 200. El caso aparece en supervisión. [Registro HTTP](../evidencias/evidencia-navegador.txt) y [captura del detalle](../evidencias/evidencia-g12.png) y [captura del listado](../evidencias/evidencia-listado.png) |
 
 ## Pruebas por requisito
 
