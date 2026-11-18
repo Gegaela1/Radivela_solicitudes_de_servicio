@@ -776,3 +776,50 @@ def duplicate(radicado: str, data: Duplicate, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+class ServiceSettings(Input):
+    prioridad: Literal["Baja", "Normal", "Alta"]
+    dias: int = Field(ge=1, le=365)
+
+
+@api.patch("/servicios/{service_id}")
+def settings(service_id: int, data: ServiceSettings, db: DB, actor: Actor):
+    require(actor, "coordinacion")
+    service = catalog_item(db, service_id, allow_other=False)
+    service.prioridad, service.dias = data.prioridad, data.dias
+    db.commit()
+    return {"id": service.id, **data.model_dump()}
+
+
+def timing(case, requests, reopened, excluded, observed):
+    started = reopened or case.creada
+    end = case.cerrada or observed
+    intervals = [
+        (local_date(entry.inicio), local_date(entry.fin) if entry.fin else None)
+        for entry in requests if entry.inicio >= started
+    ]
+    elapsed = 0
+    due = None
+    today = local_date(end)
+    for day in weekdays_after(local_date(started), excluded):
+        if due and day > today:
+            break
+        if day > today and any(stop is None for _, stop in intervals):
+            break
+        if any(begin < day and (stop is None or day <= stop) for begin, stop in intervals):
+            continue
+        if day <= today:
+            elapsed += 1
+        if due is None and (elapsed == case.dias or day > today):
+            if day <= today:
+                due = day
+            else:
+                remaining = case.dias - elapsed
+                due = day
+                for _ in range(remaining - 1):
+                    due = next(weekdays_after(due, excluded))
+                break
+    return {"dias_habiles": elapsed, "vencimiento": due,
+            "segundos_totales": max(0, int((end - case.creada).total_seconds())),
+            "vencida": due is not None and today > due}
+
