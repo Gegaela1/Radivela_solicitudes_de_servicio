@@ -638,3 +638,105 @@ def download(radicado: str, document_id: int, db: DB, actor: Actor):
     return FileResponse(storage / entry.clave, media_type="application/pdf", filename=entry.nombre,
                         headers={"Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff"})
 
+
+from datetime import date
+from zoneinfo import ZoneInfo
+
+BOGOTA = ZoneInfo("America/Bogota")
+
+
+class Holiday(Base):
+    __tablename__ = "festivo"
+    fecha: Mapped[date] = mapped_column(primary_key=True)
+
+
+class Reopening(Base):
+    __tablename__ = "reapertura"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    caso: Mapped[int] = mapped_column(ForeignKey("solicitud.id"), index=True)
+    cierre_id: Mapped[int] = mapped_column(ForeignKey("cierre.id"))
+    motivo: Mapped[str] = mapped_column(String)
+    fecha: Mapped[datetime] = mapped_column(DateTime, default=now)
+    decision: Mapped[str | None] = mapped_column(String)
+    motivo_decision: Mapped[str | None] = mapped_column(String)
+    decisor: Mapped[int | None] = mapped_column(ForeignKey("usuario.id"))
+    resuelta: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class ReopenInput(Version):
+    motivo: Message
+
+
+class Resolution(ReopenInput):
+    decision: Literal["aprobar", "rechazar"]
+    responsable: int | None = Field(default=None, gt=0)
+
+
+def local_date(value):
+    return value.replace(tzinfo=timezone.utc).astimezone(BOGOTA).date()
+
+
+def holidays(db):
+    return set(db.scalars(select(Holiday.fecha)))
+
+
+def weekdays_after(start, excluded):
+    while True:
+        start += timedelta(days=1)
+        if start.weekday() < 5 and start not in excluded:
+            yield start
+
+
+def reopening_limit(db, closure):
+    from itertools import islice
+
+    return next(islice(weekdays_after(local_date(closure.fecha), holidays(db)), 9, None))
+
+
+def pending_reopening(db, case):
+    return db.scalar(select(Reopening).where(Reopening.caso == case.id, Reopening.decision.is_(None)))
+
+
+def closures(db, case):
+    return list(db.scalars(select(Closure).where(Closure.caso == case.id).order_by(Closure.id.desc())))
+
+
+@api.post("/solicitudes/{radicado}/reaperturas", status_code=201)
+def reopen(radicado: str, data: ReopenInput, db: DB, actor: Actor):
+    case = owned_case(db, radicado, actor)
+    history = closures(db, case)
+    if case.estado != "Finalizada" or not history or pending_reopening(db, case):
+        raise HTTPException(409, "La solicitud no admite una reapertura ahora")
+    if local_date(now()) > reopening_limit(db, history[0]):
+        raise HTTPException(409, "Venció el plazo para pedir la reapertura")
+    transition(db, case, data.version, "Finalizada", {})
+    entry = Reopening(caso=case.id, cierre_id=history[0].id, motivo=data.motivo)
+    db.add(entry)
+    event(db, case, actor, "Reapertura solicitada", data.motivo)
+    db.commit()
+    return {"id": entry.id, "radicado": radicado, "estado": "pendiente"}
+
+
+@api.patch("/reaperturas/{reopening_id}")
+def resolve(reopening_id: int, data: Resolution, db: DB, actor: Actor):
+    require(actor, "coordinacion")
+    entry = db.get(Reopening, reopening_id)
+    if not entry:
+        raise HTTPException(404, "Reapertura no encontrada")
+    if entry.decision:
+        raise HTTPException(409, "La reapertura ya fue resuelta")
+    case = db.get(Case, entry.caso)
+    changes = {}
+    if data.decision == "aprobar":
+        responsible = eligible(db, data.responsable or case.responsable)
+        if not responsible:
+            raise HTTPException(422, "Seleccione un responsable habilitado")
+        changes = {"estado": "En atención", "responsable": responsible.id, "cerrada": None}
+    transition(db, case, data.version, "Finalizada", changes)
+    entry.decision = data.decision
+    entry.motivo_decision, entry.decisor, entry.resuelta = data.motivo, actor.id, now()
+    kind = "Reapertura aprobada" if data.decision == "aprobar" else "Reapertura rechazada"
+    notify(db, case, event(db, case, actor, kind, data.motivo))
+    db.commit()
+    return detail(db, case, actor)
+
