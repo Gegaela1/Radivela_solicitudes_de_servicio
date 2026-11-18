@@ -538,3 +538,17 @@ def assign(radicado: str, data: Assignment, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+@api.get("/solicitudes/{radicado}/historial")
+def history(radicado: str, db: DB, actor: Actor,
+            offset: int = Query(0, ge=0), limite: int = Query(50, ge=1, le=100)):
+    case = allowed_case(db, actor, radicado)
+    query = select(Event, User.nombre).join(User, Event.autor == User.id).where(Event.caso == case.id)
+    if case.titular == actor.id and "coordinacion" not in actor.roles:
+        query = query.where(Event.visible)
+    return [{"id": entry.id, "tipo": entry.tipo, "fecha": stamp(entry.fecha),
+             "motivo": entry.motivo, "autor": author}
+            for entry, author in db.execute(
+                query.order_by(Event.fecha, Event.id).offset(offset).limit(limite)
+            )]
+
