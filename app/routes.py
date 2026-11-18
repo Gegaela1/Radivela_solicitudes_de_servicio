@@ -354,3 +354,84 @@ def cancel(radicado: str, data: Version, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+from fastapi import Query
+from sqlalchemy import or_, text
+
+
+class RequestInfo(Base):
+    __tablename__ = "requerimiento"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    caso: Mapped[int] = mapped_column(ForeignKey("solicitud.id"), index=True)
+    tipo: Mapped[str] = mapped_column(String)
+    detalle: Mapped[str] = mapped_column(String)
+    abierta: Mapped[bool] = mapped_column(default=True)
+    respuesta: Mapped[str | None] = mapped_column(String)
+    inicio: Mapped[datetime] = mapped_column(DateTime, default=now)
+    fin: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class Evaluation(Version):
+    decision: Literal["aceptar", "rechazar", "requerir"]
+    motivo: Message | None = None
+    tipo: Literal["texto", "documento"] | None = None
+    servicio_id: int | None = Field(default=None, gt=0)
+
+
+@api.get("/bandeja")
+def inbox(db: DB, actor: Actor, estado: str | None = None, servicio_id: int | None = None,
+          offset: int = Query(0, ge=0), limite: int = Query(50, ge=1, le=100)):
+    require(actor, "atencion", "coordinacion")
+    query = select(Case)
+    if "coordinacion" not in actor.roles:
+        query = query.where(or_(Case.estado == "Recibida", Case.responsable == actor.id,
+                               Case.responsable.is_(None) & (Case.gestor == actor.id)))
+    if estado:
+        query = query.where(Case.estado == estado)
+    if servicio_id:
+        query = query.where(Case.servicio_id == servicio_id)
+    return [summary(case) for case in db.scalars(
+        query.order_by(Case.id.desc()).offset(offset).limit(limite)
+    )]
+
+
+@api.post("/solicitudes/{radicado}/revision")
+def start_review(radicado: str, data: Version, db: DB, actor: Actor):
+    require(actor, "atencion")
+    case = allowed_case(db, actor, radicado)
+    transition(db, case, data.version, "Recibida",
+               {"estado": "En revisión", "gestor": actor.id})
+    event(db, case, actor, "Inicio de revisión")
+    db.commit()
+    return detail(db, case, actor)
+
+
+@api.post("/solicitudes/{radicado}/evaluacion")
+def evaluate(radicado: str, data: Evaluation, db: DB, actor: Actor):
+    require(actor, "atencion")
+    case = allowed_case(db, actor, radicado)
+    if case.estado != "En revisión":
+        raise HTTPException(409, "El caso debe estar en revisión")
+    if case.gestor != actor.id:
+        raise HTTPException(403, "Solo el gestor puede evaluar")
+    state = {"aceptar": "Aceptada", "rechazar": "Rechazada",
+             "requerir": "En espera de información"}[data.decision]
+    changes = {"estado": state}
+    if data.decision == "aceptar":
+        current = db.get(Service, case.servicio_id)
+        service = catalog_item(db, data.servicio_id or current.id, allow_other=False)
+        if current.nombre != "Otro servicio" and service.id != current.id:
+            raise HTTPException(422, "Solo Otro servicio se reclasifica al aceptar")
+        if current.id != service.id:
+            changes.update(servicio_id=service.id, prioridad=service.prioridad, dias=service.dias)
+    elif not data.motivo or (data.decision == "requerir" and not data.tipo):
+        raise HTTPException(422, "Indique el motivo y el tipo de complemento si aplica")
+    if data.decision == "rechazar":
+        changes["cerrada"] = now()
+    transition(db, case, data.version, "En revisión", changes)
+    if data.decision == "requerir":
+        db.add(RequestInfo(caso=case.id, tipo=data.tipo, detalle=data.motivo))
+    event(db, case, actor, state, data.motivo)
+    db.commit()
+    return detail(db, case, actor)
+
