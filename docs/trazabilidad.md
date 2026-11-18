@@ -8,17 +8,17 @@
 | A2 | Describir problema, alcance, actores, responsabilidades, proceso y CA-01 a CA-06 | El levantamiento contiene el proceso y los actores. Aquí se explicita el cruce con los seis códigos de la guía. |
 | A3 | Entrevista, reglas, criterios acordados y `docs/requisitos.md` | Hay respuestas registradas y matriz RF/RNF. La especificación está en docs/requisitos.md. Registrar la aprobación académica cuando se obtenga. |
 | A4 | `docs/diseno.md`, interfaces, diagramas, endpoints, validaciones, relaciones y especificación API | El diseño incluye diagramas, modelo, contratos y especificación de vistas. Los prototipos navegables y la validación visual se realizan al construir la interfaz. |
-| A5 | Frontend conectado a API REST, operaciones justificadas, validaciones, persistencia, reglas e instalación reproducible | Pendiente demostrarlo en la aplicación ejecutable. Usar transiciones para cancelación y duplicados, conservando sus registros. |
+| A5 | Frontend conectado a API REST, operaciones justificadas, validaciones, persistencia, reglas e instalación reproducible | El escenario G12 verifica la aplicación ejecutable. Usar transiciones para cancelación y duplicados, conservando sus registros. |
 | A6 | Rama, commits descriptivos, PR, historial y aportes identificables | Hay ramas propuestas. Cada RF debe tener su rama y PR hacia `main`, con commits de cambios reales, pruebas y revisión del diff. Conservar enlaces y aportes individuales verificables. |
 | A7 | Ejecutar los 12 escenarios de la guía y documentar HTTP, entradas, resultados y evidencias | Los identificadores PF del levantamiento representan pruebas por RF. La tabla de este documento enumera por separado los 12 escenarios obligatorios y su cobertura. |
 | A8 | `docs/trazabilidad.md` con cadena CA → RF → código → PR → prueba | El levantamiento tiene un cruce de negocio preliminar. Los seis códigos están incluidos. Incorporar los enlaces reales al implementar. |
 | A9 | Ejemplo completo de trazabilidad y demostración del flujo, pruebas y aportes | Los identificadores de la imagen son ilustrativos. En este proyecto, radicar es RF-04. Registrar las rutas, PR y pruebas que efectivamente correspondan. |
-| A10 | Sustentación con distribución exacta de 20 minutos | Guion registrado abajo. Falta preparar el material y ensayar con el sistema. |
-| A11 | Aplicación en vivo, caso completo, decisiones, pruebas, GitHub, presentación PDF/PPT y repositorio ejecutable | Pendiente preparar y verificar esos entregables. La estudiante cubre todos los bloques del trabajo individual. |
+| A10 | Sustentación con distribución exacta de 20 minutos | Guion registrado abajo. El [guion](demo.md) acompaña la presentación. El recorrido funcional se ejecutó en navegador. |
+| A11 | Aplicación en vivo, caso completo, decisiones, pruebas, GitHub, presentación PDF/PPT y repositorio ejecutable | Se prepararon el repositorio, la presentación y las evidencias del caso en navegador. La estudiante cubre todos los bloques del trabajo individual. |
 
 ## Correspondencia para docs/trazabilidad.md
 
-| Condición | RF del levantamiento | Componente previsto | Escenarios mínimos de la guía | PR real |
+| Condición | RF del levantamiento | Componente | Escenarios mínimos de la guía | PR real |
 |---|---|---|---|---|
 | CA-01 Presentar solicitud | RF-04 | Formulario y API de radicación | G01, G02, G11, G12 | Pendiente |
 | CA-02 Evaluar y gestionar | RF-02, RF-08 a RF-10 | Evaluación, complemento y asignación | G05, G06, G12 | Pendiente |
@@ -44,7 +44,7 @@
 | G11 | Verificar persistencia e integridad | Datos conservados tras reinicio y relaciones válidas. |
 | G12 | Demostrar integración completa | Recorrido en el navegador que pasa por API y base de datos. |
 
-Registrar por prueba el ID, RF, precondiciones, pasos, entradas, resultado esperado y observado, estado, evidencia y método/código HTTP cuando aplique. Mantener pruebas específicas para JWT, permisos, corrección, cancelación, reapertura, duplicados, cómputo de plazos, PDF y RF-19 opcional. Las pruebas aquí están pendientes de ejecución.
+Registrar por prueba el ID, RF, precondiciones, pasos, entradas, resultado esperado y observado, estado, evidencia y método/código HTTP cuando aplique. Mantener pruebas específicas para JWT, permisos, corrección, cancelación, reapertura, duplicados, cómputo de plazos, PDF y RF-19 opcional. Los resultados observados se registran en [Pruebas de Radivela](pruebas.md).
 
 ## Repositorio y sustentación
 
@@ -56,7 +56,7 @@ Registrar por prueba el ID, RF, precondiciones, pasos, entradas, resultado esper
 WhatsApp figura como RF-19 opcional. Los seis criterios obligatorios se comprueban con el portal.
 ## Ramas, componentes y pruebas por requisito
 
-| RF | Función | Componente previsto | Rama | Prueba prevista | PR |
+| RF | Función | Componente | Rama | Prueba ejecutada | PR |
 |---|---|---|---|---|---|
 | RF-01 | Registro | POST /auth/registro | `feat/rf-01-alta-solicitante` | PF-01 | Pendiente |
 | RF-02 | Acceso | POST /auth/login | `feat/rf-02-acceso-jwt` | PF-02 | Pendiente |
@@ -77,3 +77,10 @@ WhatsApp figura como RF-19 opcional. Los seis criterios obligatorios se comprueb
 | RF-17 | Prioridades y plazos | PATCH /servicios/{id} | `feat/rf-17-prioridad-plazos` | PF-17 | Pendiente |
 | RF-18 | Supervisión | GET /supervision | `feat/rf-18-supervision` | PF-18 | Pendiente |
 | RF-19 | WhatsApp opcional | Avisos por WhatsApp | `feat/rf-19-avisos-whatsapp` | PF-19 | Pendiente |
+
+
+## Código y evidencia
+
+La implementación de los contratos de la matriz está en [app/routes.py](../app/routes.py). Las vistas que llaman a esos contratos están en [app/web/portal.js](../app/web/portal.js). [Pruebas de Radivela](pruebas.md) enlaza las evidencias de los escenarios G01 a G12 y PF-01 a PF-18.
+
+Cada rama de la matriz apunta al commit que incorpora el requisito. Los campos de PR quedan pendientes hasta su publicación en el [repositorio confirmado](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio). La aprobación académica se registra cuando la organización la confirme.

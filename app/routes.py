@@ -1,9 +1,20 @@
-from typing import Annotated
+import os
+from datetime import date, datetime, timedelta, timezone
+from io import BytesIO
+from typing import Annotated, Literal
+from uuid import uuid4
+from zoneinfo import ZoneInfo
+
+import jwt
 
 from argon2 import PasswordHasher
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, ConfigDict, EmailStr, StringConstraints
-from sqlalchemy import JSON, Boolean, String, select
+from argon2.exceptions import VerificationError
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi.responses import FileResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints
+from pypdf import PdfReader
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
@@ -58,13 +69,6 @@ def register(data: Registration, db: DB):
     return create_user(db, data, ["solicitante"])
 
 
-import os
-from datetime import datetime, timedelta, timezone
-
-import jwt
-from argon2.exceptions import VerificationError
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
 bearer = HTTPBearer(auto_error=False)
 dummy_hash = hasher.hash("comparación para cuentas inexistentes")
 
@@ -98,7 +102,7 @@ def login(data: Login, db: DB):
     now = datetime.now(timezone.utc)
     token = jwt.encode({"sub": str(user.id), "iat": now, "exp": now + timedelta(hours=1)},
                        secret(), algorithm="HS256")
-    return {"access_token": token, "token_type": "bearer", "roles": user.roles}
+    return {"access_token": token, "token_type": "bearer", "roles": user.roles, "nombre": user.nombre}
 
 
 def current_user(db: DB, credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)]):
@@ -123,9 +127,6 @@ def require(user, *roles):
         raise HTTPException(403, "No tiene permiso para esta operación")
 
 
-from typing import Literal
-
-
 class StaffRegistration(Registration):
     roles: set[Literal["atencion", "coordinacion", "solicitante"]]
 
@@ -144,12 +145,6 @@ def staff(db: DB, actor: Actor):
     return [{"id": user.id, "nombre": user.nombre} for user in db.scalars(
         select(User).where(User.activo.is_(True)).order_by(User.nombre, User.id)
     ) if "atencion" in user.roles]
-
-
-from uuid import uuid4
-
-from pydantic import Field
-from sqlalchemy import DateTime, ForeignKey, Integer, func, update
 
 
 def now():
@@ -261,7 +256,7 @@ def allowed_case(db, actor, radicado):
     case = find_case(db, radicado)
     if (case.titular == actor.id or "coordinacion" in actor.roles
             or ("atencion" in actor.roles and (
-                actor.id in (case.gestor, case.responsable) or case.estado == "Recibida"
+                actor.id == (case.responsable or case.gestor) or case.estado == "Recibida"
             ))):
         return case
     raise HTTPException(404, "Solicitud no encontrada")
@@ -272,6 +267,25 @@ def detail(db, case, actor):
         "nombre", "documento", "correo", "descripcion",
     )}}
     result["acciones"] = actions(db, case, actor)
+    result["servicio"] = db.get(Service, case.servicio_id).nombre
+    request_info = open_request(db, case)
+    result["requerimiento"] = (
+        {key: getattr(request_info, key) for key in ("id", "tipo", "detalle")}
+        if request_info else None
+    )
+    result["cierres"] = [
+        {"id": entry.id, "fecha": stamp(entry.fecha), "respuesta": entry.respuesta,
+         "resultado": entry.resultado, "tiempo": entry.tiempo} for entry in closures(db, case)
+    ]
+    result["documentos"] = [
+        {"id": entry.id, "nombre": entry.nombre, "cierre_id": entry.cierre_id}
+        for entry in db.scalars(select(Document).where(Document.caso == case.id).order_by(Document.id))
+    ]
+    pending = pending_reopening(db, case)
+    result["reapertura"] = {"id": pending.id, "motivo": pending.motivo} if pending else None
+    if case.principal:
+        result["principal"] = db.get(Case, case.principal).radicado
+    result.update(case_timing(db, case, now()))
     return result
 
 
@@ -280,17 +294,37 @@ def actions(db, case, actor):
 
 
 def action_rules(db, case, actor):
-    return {}
+    owner = case.titular == actor.id and "solicitante" in actor.roles
+    coordinator = "coordinacion" in actor.roles
+    attendant = "atencion" in actor.roles
+    state = case.estado
+    return {
+        "corregir": owner and state == "Recibida",
+        "cancelar": owner and state == "Recibida",
+        "revision": attendant and state == "Recibida",
+        "evaluacion": attendant and case.gestor == actor.id and state == "En revisión",
+        "complementos": owner and state == "En espera de información",
+        "asignacion": coordinator and state == "Aceptada",
+        "finalizacion": attendant and case.responsable == actor.id and state == "En atención",
+        "reaperturas": owner and state == "Finalizada" and not pending_reopening(db, case)
+        and local_date(now()) <= reopening_limit(db, closures(db, case)[0]),
+        "resolver": coordinator and state == "Finalizada" and bool(pending_reopening(db, case)),
+        "duplicado": can_mark_duplicate(case, actor) and state in ACTIVE_STATES,
+    }
 
 
 @api.get("/solicitudes")
 def own_cases(db: DB, actor: Actor, offset: int = 0, limite: int = 50):
     if offset < 0 or not 1 <= limite <= 100:
         raise HTTPException(422, "Paginación inválida")
-    return [summary(case) for case in db.scalars(
+    cases = list(db.scalars(
         select(Case).where(Case.titular == actor.id).order_by(Case.id.desc())
         .offset(offset).limit(limite)
-    )]
+    ))
+    types = dict(db.execute(select(RequestInfo.caso, RequestInfo.tipo).where(
+        RequestInfo.caso.in_([case.id for case in cases]), RequestInfo.abierta
+    )).all())
+    return [{**summary(case), "tipo_requerimiento": types.get(case.id)} for case in cases]
 
 
 @api.get("/solicitudes/{radicado}")
@@ -322,7 +356,7 @@ def owned_case(db, radicado, actor):
 def transition(db, case, version, expected, values):
     states = [expected] if isinstance(expected, str) else expected
     result = db.execute(update(Case).where(
-        Case.id == case.id, Case.version == version, Case.estado.in_(states)
+        Case.id == case.id, Case.version == version, Case.version == case.version, Case.estado.in_(states)
     ).values(**values, version=Case.version + 1))
     if result.rowcount != 1:
         raise HTTPException(409, "La solicitud cambió o su estado impide la operación")
@@ -353,10 +387,6 @@ def cancel(radicado: str, data: Version, db: DB, actor: Actor):
     event(db, case, actor, "Cancelación")
     db.commit()
     return detail(db, case, actor)
-
-
-from fastapi import Query
-from sqlalchemy import or_, text
 
 
 class RequestInfo(Base):
@@ -431,15 +461,9 @@ def evaluate(radicado: str, data: Evaluation, db: DB, actor: Actor):
     transition(db, case, data.version, "En revisión", changes)
     if data.decision == "requerir":
         db.add(RequestInfo(caso=case.id, tipo=data.tipo, detalle=data.motivo))
-    event(db, case, actor, state, data.motivo)
+    notify(db, case, event(db, case, actor, state, data.motivo))
     db.commit()
     return detail(db, case, actor)
-
-
-from io import BytesIO
-
-from fastapi import File, Form, UploadFile
-from pypdf import PdfReader
 
 
 class Document(Base):
@@ -450,6 +474,7 @@ class Document(Base):
     nombre: Mapped[str] = mapped_column(String)
     clave: Mapped[str] = mapped_column(String, unique=True)
     tamano: Mapped[int] = mapped_column(Integer)
+    cierre_id: Mapped[int | None] = mapped_column(ForeignKey("cierre.id"))
 
 
 def pdf_bytes(upload):
@@ -596,6 +621,7 @@ class Closure(Base):
     fecha: Mapped[datetime] = mapped_column(DateTime, default=now)
     respuesta: Mapped[str] = mapped_column(String)
     resultado: Mapped[str] = mapped_column(String)
+    tiempo: Mapped[dict | None] = mapped_column(JSON)
 
 
 @api.post("/solicitudes/{radicado}/finalizacion")
@@ -616,15 +642,15 @@ def finish(radicado: str, db: DB, actor: Actor, version: Annotated[int, Form(gt=
     raw = pdf_bytes(pdf) if pdf else None
     closed = now()
     transition(db, case, version, "En atención", {"estado": "Finalizada", "cerrada": closed})
+    snapshot = case_timing(db, case, closed)
+    if snapshot["vencimiento"]:
+        snapshot["vencimiento"] = snapshot["vencimiento"].isoformat()
     closure = Closure(caso=case.id, autor=actor.id, fecha=closed, respuesta=respuesta,
-                      resultado=resultado)
+                      resultado=resultado, tiempo=snapshot)
     db.add(closure)
     notify(db, case, event(db, case, actor, "Finalización", resultado))
     commit_pdf(db, case, raw, "respuesta.pdf", closure=closure)
     return detail(db, case, actor)
-
-
-from fastapi.responses import FileResponse
 
 
 @api.get("/solicitudes/{radicado}/documentos/{document_id}")
@@ -638,9 +664,6 @@ def download(radicado: str, document_id: int, db: DB, actor: Actor):
     return FileResponse(storage / entry.clave, media_type="application/pdf", filename=entry.nombre,
                         headers={"Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff"})
 
-
-from datetime import date
-from zoneinfo import ZoneInfo
 
 BOGOTA = ZoneInfo("America/Bogota")
 
@@ -771,7 +794,7 @@ def duplicate(radicado: str, data: Duplicate, db: DB, actor: Actor):
                {"estado": "Cerrada por duplicado", "principal": principal.id, "cerrada": now()})
     pending = open_request(db, case)
     if pending:
-        pending.abierta = False
+        pending.abierta, pending.fin = False, case.cerrada
     event(db, case, actor, "Cierre por duplicado", f"{principal.radicado} · {data.motivo}")
     db.commit()
     return detail(db, case, actor)
@@ -791,6 +814,13 @@ def settings(service_id: int, data: ServiceSettings, db: DB, actor: Actor):
     return {"id": service.id, **data.model_dump()}
 
 
+def case_timing(db, case, observed):
+    requests = db.scalars(select(RequestInfo).where(RequestInfo.caso == case.id))
+    reopened = db.scalar(select(func.max(Reopening.resuelta)).where(
+        Reopening.caso == case.id, Reopening.decision == "aprobar"
+    ))
+    return timing(case, requests, reopened, holidays(db), observed)
+
 def timing(case, requests, reopened, excluded, observed):
     started = reopened or case.creada
     end = case.cerrada or observed
@@ -804,7 +834,7 @@ def timing(case, requests, reopened, excluded, observed):
     for day in weekdays_after(local_date(started), excluded):
         if due and day > today:
             break
-        if day > today and any(stop is None for _, stop in intervals):
+        if day > today and (any(stop is None for _, stop in intervals)):
             break
         if any(begin < day and (stop is None or day <= stop) for begin, stop in intervals):
             continue

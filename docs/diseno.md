@@ -85,7 +85,7 @@ Para carga de PDF usar multipart, límite inicial de 10 MiB, validación de tipo
 
 ## Frontend
 
-**Propuesta A.** Fondo marfil, títulos serif, texto y navegación azul marino, acción primaria azul y tabla editorial. Encabezado propio con «Radivela» y «Portal de solicitudes de servicio». Sin escudo externo. Estados con texto y color, foco visible, etiquetas explícitas y mensajes de validación asociados a campos.
+**Propuesta A.** Fondo gris claro, navegación lateral verde petróleo, títulos de palo seco y acciones principales verdes. La tabla muestra progreso orientativo según el estado y acciones de consulta, complemento o respuesta. Encabezado propio con «Radivela» y «Portal de solicitudes de servicio». Sin escudo externo. Estados con texto y color, foco visible, etiquetas explícitas y mensajes de validación asociados a campos.
 
 | Vista | Distribución y acción principal |
 |---|---|
