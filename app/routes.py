@@ -345,3 +345,12 @@ def correct(radicado: str, data: Correction, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+@api.post("/solicitudes/{radicado}/cancelar")
+def cancel(radicado: str, data: Version, db: DB, actor: Actor):
+    case = owned_case(db, radicado, actor)
+    transition(db, case, data.version, "Recibida", {"estado": "Cancelada", "cerrada": now()})
+    event(db, case, actor, "Cancelación")
+    db.commit()
+    return detail(db, case, actor)
+
