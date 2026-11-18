@@ -8,6 +8,8 @@ Después de migrar una base de demostración con `alembic upgrade head`, ejecuta
 | Atención | `atencion@example.com` | Bandeja |
 | Coordinación | `coord@example.com` | Bandeja con acceso a supervisión |
 
+Si olvidaste la contraseña, ejecuta `& $python -m scripts.demo --restablecer` desde la carpeta del proyecto. Introduce y confirma una clave nueva. El comando cambia la contraseña de las tres cuentas ficticias existentes y conserva las solicitudes. Cierra sesión en el navegador antes de entrar con la nueva contraseña.
+
 Abre tres perfiles o ventanas de navegador para conservar las tres sesiones. En vivo, radica un certificado, solicita una aclaración, contéstala, acepta, asigna, intenta finalizar sin el PDF, adjúntalo, cierra y muestra la descarga y la supervisión.
 
 | Tiempo | Bloque | Qué mostrar |
