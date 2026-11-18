@@ -10,15 +10,20 @@ Radivela centraliza solicitudes de servicio desde la radicación hasta la respue
 
 ## Instalación en Windows PowerShell
 
-Ejecuta estos comandos desde la carpeta que contiene este README, con Python 3.12 disponible.
+Desde PowerShell, entra en la carpeta que contiene este README. Comprueba Python con `py -3.12 --version`. Si el lanzador indica que falta esa versión, ejecuta `py install 3.12` y comprueba la versión de nuevo antes de continuar.
 
 ```powershell
 py -3.12 -m venv .venv
+if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el entorno de Python 3.12.' }
 $python = '.\.venv\Scripts\python.exe'
 & $python -m pip install -r requirements.txt
-$secret = & $python -c 'import secrets; print(secrets.token_hex(32))'
-$config = (Get-Content .env.example -Raw).Replace('RADIVELA_SECRET=', "RADIVELA_SECRET=$secret")
-[IO.File]::WriteAllText((Join-Path $PWD '.env'), $config)
+if ($LASTEXITCODE -ne 0) { throw 'Falló la instalación de dependencias.' }
+if (-not (Test-Path .env)) {
+    $secret = & $python -c 'import secrets; print(secrets.token_hex(32))'
+    if ($LASTEXITCODE -ne 0 -or -not $secret) { throw 'Falló la generación del secreto.' }
+    $config = (Get-Content .env.example -Raw).Replace('RADIVELA_SECRET=', "RADIVELA_SECRET=$secret")
+    [IO.File]::WriteAllText((Join-Path $PWD '.env'), $config)
+}
 & $python -m alembic upgrade head
 & $python -m app.seed
 & $python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
