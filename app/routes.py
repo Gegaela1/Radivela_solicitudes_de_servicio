@@ -435,3 +435,83 @@ def evaluate(radicado: str, data: Evaluation, db: DB, actor: Actor):
     db.commit()
     return detail(db, case, actor)
 
+
+from io import BytesIO
+
+from fastapi import File, Form, UploadFile
+from pypdf import PdfReader
+
+
+class Document(Base):
+    __tablename__ = "documento"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    caso: Mapped[int] = mapped_column(ForeignKey("solicitud.id"), index=True)
+    requerimiento: Mapped[int | None] = mapped_column(ForeignKey("requerimiento.id"), unique=True)
+    nombre: Mapped[str] = mapped_column(String)
+    clave: Mapped[str] = mapped_column(String, unique=True)
+    tamano: Mapped[int] = mapped_column(Integer)
+
+
+def pdf_bytes(upload):
+    limit = 10 * 1024 * 1024
+    raw = upload.file.read(limit + 1)
+    if len(raw) > limit:
+        raise HTTPException(413, "El PDF supera 10 MiB")
+    if upload.content_type != "application/pdf" or not raw.startswith(b"%PDF-"):
+        raise HTTPException(415, "Adjunte un PDF válido")
+    try:
+        reader = PdfReader(BytesIO(raw), strict=True)
+        if reader.is_encrypted or not len(reader.pages):
+            raise ValueError("PDF sin páginas disponibles")
+    except Exception as error:
+        raise HTTPException(415, "Adjunte un PDF legible") from error
+    return raw
+
+
+def commit_pdf(db, case, raw, name, request_id=None, closure=None):
+    from app.config import storage
+
+    if raw is None:
+        db.commit()
+        return
+    storage.mkdir(parents=True, exist_ok=True)
+    key = uuid4().hex + ".pdf"
+    path = storage / key
+    try:
+        with path.open("xb") as target:
+            target.write(raw)
+        values = {"cierre_id": closure.id} if closure is not None else {}
+        db.add(Document(caso=case.id, requerimiento=request_id,
+                        nombre=name, clave=key, tamano=len(raw), **values))
+        db.commit()
+    except Exception:
+        path.unlink(missing_ok=True)
+        raise
+
+
+def open_request(db, case):
+    return db.scalar(select(RequestInfo).where(RequestInfo.caso == case.id, RequestInfo.abierta))
+
+
+@api.post("/solicitudes/{radicado}/complementos")
+def complement(radicado: str, db: DB, actor: Actor,
+               version: Annotated[int, Form(gt=0)],
+               requerimiento: Annotated[int, Form(gt=0)],
+               texto: Annotated[str | None, Form(max_length=10000)] = None,
+               pdf: Annotated[UploadFile | None, File()] = None):
+    case = owned_case(db, radicado, actor)
+    request_info = open_request(db, case)
+    if not request_info or request_info.id != requerimiento or case.estado != "En espera de información":
+        raise HTTPException(409, "El requerimiento ya no está abierto")
+    note = (texto or "").strip()
+    if request_info.tipo == "texto" and (not note or pdf):
+        raise HTTPException(422, "Responda el requerimiento con texto")
+    if request_info.tipo == "documento" and not pdf:
+        raise HTTPException(422, "Adjunte el PDF solicitado")
+    raw = pdf_bytes(pdf) if pdf else None
+    transition(db, case, version, "En espera de información", {"estado": "En revisión"})
+    request_info.abierta, request_info.respuesta, request_info.fin = False, note or None, now()
+    event(db, case, actor, "Complemento recibido", note or None)
+    commit_pdf(db, case, raw, "complemento.pdf", request_id=request_info.id)
+    return detail(db, case, actor)
+
