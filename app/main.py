@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.routes import api
+from app.views import assets, index
 
 app = FastAPI(title="Radivela")
 
@@ -23,3 +24,6 @@ def salud():
 
 
 app.include_router(api)
+
+app.add_api_route("/", index, include_in_schema=False)
+app.mount("/assets", assets, name="assets")
