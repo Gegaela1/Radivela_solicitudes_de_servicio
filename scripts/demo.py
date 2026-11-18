@@ -10,9 +10,9 @@ from app.config import engine, storage
 from app.routes import Registration, User, create_user, hasher
 
 ACCOUNTS = [
-    ("Ana Solís (demo)", "D-01", "ana@example.com", ["solicitante"]),
-    ("Darío Vega (demo)", "D-02", "atencion@example.com", ["atencion"]),
-    ("Irene Ríos (demo)", "D-03", "coord@example.com", ["coordinacion"]),
+    ("Ana Solís", "D-01", "ana@example.com", ["solicitante"]),
+    ("Darío Vega", "D-02", "atencion@example.com", ["atencion"]),
+    ("Irene Ríos", "D-03", "coord@example.com", ["coordinacion"]),
 ]
 
 
@@ -40,7 +40,8 @@ def reset_passwords(password):
         users = []
         for name, document, email, roles in ACCOUNTS:
             user = db.scalar(select(User).where(User.correo == email))
-            if not user or (user.nombre, user.documento, user.roles) != (name, document, roles):
+            if (not user or user.nombre not in (name, name + " (demo)")
+                    or user.documento != document or user.roles != roles):
                 raise ValueError(f"No se encontró la cuenta ficticia original {email}.")
             users.append(user)
         for user in users:

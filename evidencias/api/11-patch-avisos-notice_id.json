@@ -1,0 +1,35 @@
+[
+  {
+    "paso": 48,
+    "prueba": "PF-12",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/avisos/{notice_id}",
+    "solicitud": "/api/v1/avisos/2",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 404,
+    "obtenido": 404,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Aviso no encontrado"
+    }
+  },
+  {
+    "paso": 49,
+    "prueba": "PF-12",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/avisos/{notice_id}",
+    "solicitud": "/api/v1/avisos/2",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 2,
+      "leido": true
+    }
+  }
+]

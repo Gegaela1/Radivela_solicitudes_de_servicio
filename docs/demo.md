@@ -33,4 +33,4 @@ $env:RADIVELA_SCREENSHOT = "$PWD\storage\g12.png"
 node tests/browser/recorrido.cjs
 ```
 
-Las llamadas HTTP aparecen en la consola. La captura muestra el resultado del certificado como titular. Si el servidor usa otro puerto, asigna su dirección a `RADIVELA_BROWSER_URL`. Si usas otro Chromium, asigna el ejecutable a `RADIVELA_BROWSER_PATH`.
+Para guardar también las capturas de la espera de información, el error de cierre y supervisión, asigna un directorio a `RADIVELA_FLOW_SCREENSHOTS`. Las llamadas HTTP aparecen en la consola. La captura muestra el resultado del certificado como titular. Si el servidor usa otro puerto, asigna su dirección a `RADIVELA_BROWSER_URL`. Si usas otro Chromium, asigna el ejecutable a `RADIVELA_BROWSER_PATH`. Para consultar una ejecución persistente de las pruebas de API, sigue [casos guardados](pruebas.md#evidencia-por-endpoint-y-casos-guardados).

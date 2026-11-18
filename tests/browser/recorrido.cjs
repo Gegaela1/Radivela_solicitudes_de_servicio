@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const path = require("node:path");
 const { chromium } = require("playwright-core");
 
 const start = process.env.RADIVELA_BROWSER_URL || "http://127.0.0.1:8000";
@@ -47,14 +48,23 @@ async function main() {
       return page.locator(".heading .status").getByText(value, { exact: true }).waitFor();
     }
 
+    async function capture(page, filename) {
+      if (process.env.RADIVELA_FLOW_SCREENSHOTS) {
+        await page.screenshot({
+          path: path.join(process.env.RADIVELA_FLOW_SCREENSHOTS, filename),
+          fullPage: true,
+        });
+      }
+    }
+
     const owner = await login("ana@example.com");
     await owner.getByRole("link", { name: "Nueva solicitud" }).click();
-    await owner.getByLabel("Nombre", { exact: true }).fill("Ana Solís (demo)");
+    await owner.getByLabel("Nombre", { exact: true }).fill("Ana Solís");
     await owner.getByLabel("Documento", { exact: true }).fill("D-01");
     await owner.getByLabel("Correo electrónico").fill("ana@example.com");
     await owner.getByLabel("Tipo de servicio").selectOption({ label: "Expedición de certificados" });
-    await owner.getByLabel("Asunto").fill("Certificado para la demostración");
-    await owner.getByLabel("Descripción").fill("Solicito el certificado de un trámite ficticio.");
+    await owner.getByLabel("Asunto").fill("Certificado de afiliación");
+    await owner.getByLabel("Descripción").fill("Solicito el certificado de afiliación correspondiente al periodo 2026.");
     await owner.getByRole("button", { name: "Radicar solicitud" }).click();
     const receipt = owner.getByRole("heading", { name: /^RAD-/ });
     const radicado = await receipt.textContent();
@@ -73,6 +83,8 @@ async function main() {
     await state(handler, "En espera de información");
 
     await owner.reload();
+    await state(owner, "En espera de información");
+    await capture(owner, "espera.png");
     await action(owner, "Responder requerimiento", form => form.getByLabel("Respuesta").fill("Periodo 2026."));
     await state(owner, "En revisión");
     await handler.reload();
@@ -82,21 +94,22 @@ async function main() {
     const coordinator = await login("coord@example.com");
     await coordinator.getByRole("link", { name: radicado }).click();
     await action(coordinator, "Asignar responsable", form =>
-      form.getByLabel("Responsable").selectOption({ label: "Darío Vega (demo)" }));
+      form.getByLabel("Responsable").selectOption({ label: "Darío Vega" }));
     await state(coordinator, "En atención");
     await handler.reload();
     await handler.locator("summary").getByText("Finalizar atención", { exact: true }).click();
     const closure = handler.locator("details[open] form");
-    await closure.getByLabel("Respuesta").fill("Certificado de demostración disponible.");
+    await closure.getByLabel("Respuesta").fill("El certificado de afiliación ya está disponible.");
     await closure.getByRole("button", { name: "Finalizar atención" }).click();
     await handler.getByRole("status").getByText("Adjunte el certificado en PDF").waitFor();
+    await capture(handler, "error-pdf.png");
     await closure.getByLabel("Archivo PDF").setInputFiles(pdf);
     await closure.getByRole("button", { name: "Finalizar atención" }).click();
     await state(handler, "Finalizada");
 
     await owner.reload();
     await state(owner, "Finalizada");
-    await owner.getByText("Certificado de demostración disponible.", { exact: true }).waitFor();
+    await owner.getByText("El certificado de afiliación ya está disponible.", { exact: true }).waitFor();
     const [download] = await Promise.all([
       owner.waitForEvent("download"),
       owner.getByRole("button", { name: "respuesta.pdf", exact: true }).click(),
@@ -107,6 +120,7 @@ async function main() {
     if (screenshot) await owner.screenshot({ path: screenshot, fullPage: true });
     await coordinator.getByRole("link", { name: "Supervisión" }).click();
     await coordinator.getByRole("link", { name: radicado }).waitFor();
+    await capture(coordinator, "supervision.png");
     await owner.getByRole("link", { name: "Mis solicitudes", exact: true }).click();
     const row = owner.getByRole("row").filter({ hasText: radicado });
     await row.getByRole("link", { name: "Ver respuesta" }).waitFor();

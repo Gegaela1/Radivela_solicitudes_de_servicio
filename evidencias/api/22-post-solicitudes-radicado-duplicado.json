@@ -1,0 +1,87 @@
+[
+  {
+    "paso": 64,
+    "prueba": "PF-16",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/duplicado",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E12C4C3D7154028/duplicado",
+    "autenticada": true,
+    "entrada": {
+      "version": 1,
+      "motivo": "Mismo trámite",
+      "principal": "RAD-2026-6E58B319E10E40E6"
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Solo coordinación o la persona a cargo puede cerrar el duplicado"
+    }
+  },
+  {
+    "paso": 65,
+    "prueba": "PF-16",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/duplicado",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E12C4C3D7154028/duplicado",
+    "autenticada": true,
+    "entrada": {
+      "version": 1,
+      "motivo": "Mismo trámite",
+      "principal": "RAD-2026-6E12C4C3D7154028"
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Seleccione una solicitud principal distinta y válida"
+    }
+  },
+  {
+    "paso": 66,
+    "prueba": "PF-16",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/duplicado",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E12C4C3D7154028/duplicado",
+    "autenticada": true,
+    "entrada": {
+      "version": 1,
+      "motivo": "Mismo trámite",
+      "principal": "RAD-2026-6E58B319E10E40E6"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E12C4C3D7154028",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Cerrada por duplicado",
+      "version": 2,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 2,
+      "creada": "2026-11-18T15:22:42.892931-05:00",
+      "cerrada": "2026-11-18T15:22:42.95139-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Consulta sobre trámites",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "principal": "RAD-2026-6E58B319E10E40E6",
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-20",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  }
+]

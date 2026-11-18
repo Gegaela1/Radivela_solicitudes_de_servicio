@@ -1,0 +1,72 @@
+[
+  {
+    "paso": 43,
+    "prueba": "PF-10/G06",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/asignacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/asignacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 6,
+      "responsable": 4
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 45,
+    "prueba": "PF-10",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/asignacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/asignacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 6,
+      "responsable": 4
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En atención",
+      "version": 7,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "duplicado"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  }
+]

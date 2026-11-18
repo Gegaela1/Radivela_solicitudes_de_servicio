@@ -1,0 +1,18 @@
+[
+  {
+    "paso": 1,
+    "prueba": "OP-01",
+    "metodo": "GET",
+    "endpoint": "/api/v1/salud",
+    "solicitud": "/api/v1/salud",
+    "autenticada": false,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "estado": "disponible"
+    }
+  }
+]

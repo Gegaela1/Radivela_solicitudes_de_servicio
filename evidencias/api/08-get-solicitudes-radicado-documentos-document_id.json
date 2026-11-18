@@ -1,0 +1,54 @@
+[
+  {
+    "paso": 54,
+    "prueba": "PF-14",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}/documentos/{document_id}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/documentos/2",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "tipo": "application/pdf",
+      "bytes": 431,
+      "sha256": "292de7b154229e0d85f3bc7f0872ef8849582f2d123af6548b6a2711d7f7be30"
+    }
+  },
+  {
+    "paso": 55,
+    "prueba": "PF-14",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}/documentos/{document_id}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/documentos/2",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 404,
+    "obtenido": 404,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Solicitud no encontrada"
+    }
+  },
+  {
+    "paso": 75,
+    "prueba": "G11",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}/documentos/{document_id}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/documentos/2",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "tipo": "application/pdf",
+      "bytes": 431,
+      "sha256": "292de7b154229e0d85f3bc7f0872ef8849582f2d123af6548b6a2711d7f7be30"
+    }
+  }
+]

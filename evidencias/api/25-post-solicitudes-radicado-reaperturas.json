@@ -1,0 +1,61 @@
+[
+  {
+    "paso": 56,
+    "prueba": "PF-15",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/reaperturas",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/reaperturas",
+    "autenticada": true,
+    "entrada": {
+      "version": 8,
+      "motivo": "Solicito un ajuste"
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 1,
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "estado": "pendiente"
+    }
+  },
+  {
+    "paso": 58,
+    "prueba": "PF-15",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/reaperturas",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/reaperturas",
+    "autenticada": true,
+    "entrada": {
+      "version": 9,
+      "motivo": "Segunda petición pendiente"
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "La solicitud no admite una reapertura ahora"
+    }
+  },
+  {
+    "paso": 62,
+    "prueba": "PF-15",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/reaperturas",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/reaperturas",
+    "autenticada": true,
+    "entrada": {
+      "version": 11,
+      "motivo": "Fuera del plazo"
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Venció el plazo para pedir la reapertura"
+    }
+  }
+]

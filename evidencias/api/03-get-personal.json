@@ -1,0 +1,37 @@
+[
+  {
+    "paso": 14,
+    "prueba": "PF-10",
+    "metodo": "GET",
+    "endpoint": "/api/v1/personal",
+    "solicitud": "/api/v1/personal",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "id": 4,
+        "nombre": "Darío Vega"
+      }
+    ]
+  },
+  {
+    "paso": 15,
+    "prueba": "PF-10",
+    "metodo": "GET",
+    "endpoint": "/api/v1/personal",
+    "solicitud": "/api/v1/personal",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  }
+]

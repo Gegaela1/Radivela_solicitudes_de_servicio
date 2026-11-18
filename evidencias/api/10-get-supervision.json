@@ -1,0 +1,147 @@
+[
+  {
+    "paso": 71,
+    "prueba": "PF-18",
+    "metodo": "GET",
+    "endpoint": "/api/v1/supervision",
+    "solicitud": "/api/v1/supervision?estado=Recibida&servicio_id=1&prioridad=Alta",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 72,
+    "prueba": "PF-18/G10",
+    "metodo": "GET",
+    "endpoint": "/api/v1/supervision",
+    "solicitud": "/api/v1/supervision?estado=Recibida&servicio_id=1&prioridad=Alta",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "total": 1,
+      "pendientes": 1,
+      "vencidas": 0,
+      "en_plazo": 1,
+      "promedio_dias_habiles_cerradas": null,
+      "solicitudes": [
+        {
+          "radicado": "RAD-2026-E272226F8FB0435F",
+          "servicio_id": 1,
+          "asunto": "Solicitud de orientación administrativa",
+          "estado": "Recibida",
+          "version": 1,
+          "gestor": null,
+          "responsable": null,
+          "prioridad": "Alta",
+          "dias": 3,
+          "creada": "2026-11-18T15:22:43.062174-05:00",
+          "cerrada": null,
+          "dias_habiles": 0,
+          "vencimiento": "2026-11-23",
+          "segundos_totales": 0,
+          "vencida": false
+        }
+      ]
+    }
+  },
+  {
+    "paso": 73,
+    "prueba": "G10",
+    "metodo": "GET",
+    "endpoint": "/api/v1/supervision",
+    "solicitud": "/api/v1/supervision",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "total": 4,
+      "pendientes": 1,
+      "vencidas": 0,
+      "en_plazo": 1,
+      "promedio_dias_habiles_cerradas": 0.0,
+      "solicitudes": [
+        {
+          "radicado": "RAD-2026-E272226F8FB0435F",
+          "servicio_id": 1,
+          "asunto": "Solicitud de orientación administrativa",
+          "estado": "Recibida",
+          "version": 1,
+          "gestor": null,
+          "responsable": null,
+          "prioridad": "Alta",
+          "dias": 3,
+          "creada": "2026-11-18T15:22:43.062174-05:00",
+          "cerrada": null,
+          "dias_habiles": 0,
+          "vencimiento": "2026-11-23",
+          "segundos_totales": 0,
+          "vencida": false
+        },
+        {
+          "radicado": "RAD-2026-6E12C4C3D7154028",
+          "servicio_id": 1,
+          "asunto": "Solicitud de orientación administrativa",
+          "estado": "Cerrada por duplicado",
+          "version": 2,
+          "gestor": null,
+          "responsable": null,
+          "prioridad": "Normal",
+          "dias": 2,
+          "creada": "2026-11-18T15:22:42.892931-05:00",
+          "cerrada": "2026-11-18T15:22:42.95139-05:00",
+          "dias_habiles": 0,
+          "vencimiento": "2026-11-20",
+          "segundos_totales": 0,
+          "vencida": false
+        },
+        {
+          "radicado": "RAD-2026-CDB6E328565743EC",
+          "servicio_id": 1,
+          "asunto": "Solicitud de orientación administrativa",
+          "estado": "Cancelada",
+          "version": 2,
+          "gestor": null,
+          "responsable": null,
+          "prioridad": "Normal",
+          "dias": 2,
+          "creada": "2026-11-18T15:22:41.785606-05:00",
+          "cerrada": "2026-11-18T15:22:41.818023-05:00",
+          "dias_habiles": 0,
+          "vencimiento": "2026-11-20",
+          "segundos_totales": 0,
+          "vencida": false
+        },
+        {
+          "radicado": "RAD-2026-6E58B319E10E40E6",
+          "servicio_id": 4,
+          "asunto": "Certificado de afiliación",
+          "estado": "Finalizada",
+          "version": 11,
+          "gestor": 4,
+          "responsable": 4,
+          "prioridad": "Normal",
+          "dias": 5,
+          "creada": "2026-11-18T15:22:41.610092-05:00",
+          "cerrada": "2026-11-18T15:22:42.820882-05:00",
+          "dias_habiles": 0,
+          "vencimiento": "2026-11-25",
+          "segundos_totales": 1,
+          "vencida": false
+        }
+      ]
+    }
+  }
+]

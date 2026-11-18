@@ -1,0 +1,105 @@
+[
+  {
+    "paso": 2,
+    "prueba": "PF-01",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/registro",
+    "solicitud": "/api/v1/auth/registro",
+    "autenticada": false,
+    "entrada": {
+      "nombre": "Ana Solís",
+      "documento": "D-01",
+      "correo": "ana@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 2,
+      "nombre": "Ana Solís",
+      "roles": [
+        "solicitante"
+      ]
+    }
+  },
+  {
+    "paso": 3,
+    "prueba": "PF-01",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/registro",
+    "solicitud": "/api/v1/auth/registro",
+    "autenticada": false,
+    "entrada": {
+      "nombre": "Ana Solís",
+      "documento": "D-01",
+      "correo": "ANA@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "El correo ya está registrado"
+    }
+  },
+  {
+    "paso": 4,
+    "prueba": "PF-01",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/registro",
+    "solicitud": "/api/v1/auth/registro",
+    "autenticada": false,
+    "entrada": {
+      "nombre": "Persona de prueba otra",
+      "documento": "P-otra",
+      "correo": "otra@example.com",
+      "contrasena": "[reservado]",
+      "roles": [
+        "coordinacion"
+      ]
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": [
+        {
+          "loc": [
+            "body",
+            "roles"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    }
+  },
+  {
+    "paso": 5,
+    "prueba": "PF-01",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/registro",
+    "solicitud": "/api/v1/auth/registro",
+    "autenticada": false,
+    "entrada": {
+      "nombre": "Persona de prueba bea",
+      "documento": "P-bea",
+      "correo": "bea@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 3,
+      "nombre": "Persona de prueba bea",
+      "roles": [
+        "solicitante"
+      ]
+    }
+  }
+]

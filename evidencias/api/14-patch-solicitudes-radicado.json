@@ -1,0 +1,67 @@
+[
+  {
+    "paso": 25,
+    "prueba": "PF-06",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {
+      "version": 1,
+      "asunto": "Certificado de afiliación"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Recibida",
+      "version": 2,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "corregir",
+        "cancelar"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 35,
+    "prueba": "PF-06",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {
+      "version": 3,
+      "asunto": "Tarde"
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "La solicitud cambió o su estado impide la operación"
+    }
+  }
+]

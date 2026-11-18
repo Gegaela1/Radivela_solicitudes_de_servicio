@@ -25,7 +25,7 @@ Definí el alcance de la implementación en RF-01 a RF-18. Restringí la consult
 
 ## 3. Requisitos y Alcance
 
-Realicé una entrevista escrita en Microsoft Teams con el docente Juan Carlos Morales Guerra. Registré sus respuestas sobre JWT, los datos de radicación, los roles, la evaluación, la asignación, el cierre y la supervisión. A partir del flujo que me describió, definí los estados, los plazos y las reglas de entrega de documentos. [Entrevista y capturas de Teams](evidencias/entrevista/README.md) · [Registro de levantamiento](docs/requisitos.md#registro-de-levantamiento)
+Realicé una entrevista escrita en Microsoft Teams con el docente Juan Carlos Morales Guerra. Registré sus respuestas sobre JWT, los datos de radicación, los roles, la evaluación, la asignación, el cierre y la supervisión. A partir del flujo que me describió, definí los estados, los plazos y las reglas de entrega de documentos. [Entrevista y capturas de Teams](evidencias/entrevista/entrevista.md) · [Registro de levantamiento](docs/requisitos.md#registro-de-levantamiento)
 
 Prioricé el acceso y la radicación, luego la gestión del trámite y, por último, el seguimiento. Implementé RF-01 a RF-18 y dejé WhatsApp como ampliación opcional (RF-19).
 
@@ -212,7 +212,7 @@ $python = '.\.venv\Scripts\python.exe'
 & $python -m pytest -q -s
 ```
 
-Ejecuté las pruebas automatizadas sobre una base temporal para comprobar el flujo, los permisos y el calendario. Usé tres sesiones de navegador para verificar el recorrido completo desde cada rol. Consulta los [resultados por escenario](docs/pruebas.md), el [registro HTTP](evidencias/evidencia-http.txt), el [registro del navegador](evidencias/evidencia-navegador.txt) y la [captura del listado](evidencias/evidencia-listado.png).
+Ejecuté las pruebas sobre una base de verificación para comprobar el flujo, los permisos y el calendario. La base local conserva los casos para consultarlos en el portal. En el ZIP se incluye el procedimiento para regenerar los datos. Usé tres sesiones de navegador para verificar el recorrido completo desde cada rol. Documenté solicitudes y respuestas de los 26 endpoints en el [índice de evidencias de la API](evidencias/api/indice.md). Para generar y abrir la base de verificación, sigue los [pasos para consultar los casos](docs/pruebas.md#evidencia-por-endpoint-y-casos-guardados). Consulta los [resultados por escenario](docs/pruebas.md), el [registro HTTP](evidencias/evidencia-http.txt), el [registro del navegador](evidencias/evidencia-navegador.txt) y la [captura del listado](evidencias/evidencia-listado.png).
 
 En Swagger UI, autentícate con `POST /auth/login` y autoriza el JWT con **Authorize**. Para repetir G02, envía la radicación de la sección anterior sin `asunto` y comprueba el 422. Para repetir el flujo con tres perfiles y volver a generar la evidencia, sigue el [guion de navegador](docs/demo.md#g12-automatizado). El [registro completo de G01–G12 y PF-01–PF-18](docs/pruebas.md) incluye precondiciones y resultados. La [matriz de trazabilidad](docs/trazabilidad.md) relaciona los casos con los requisitos.
 
@@ -227,16 +227,14 @@ Realicé el levantamiento, el diseño, el desarrollo y la verificación como par
 | Interfaz y operaciones por rol | [Código del portal](app/web/) |
 | Verificación y sustentación | [Pruebas reproducibles](tests/) y [guion](docs/demo.md) |
 
-El repositorio de destino es [Gegaela1/Radivela_solicitudes_de_servicio](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio). Registraré en la matriz los enlaces de los PR cuando se publiquen.
-
-Para publicar un PR por requisito en un remoto vacío, inicia `main` con el commit base `92f14ec` y presenta las ramas de RF-01 a RF-18 en ese orden, integrando cada PR antes de abrir el siguiente. Cada rama funcional parte de la anterior. Al final, incorpora la rama de integración y los cambios de documentación.
+El repositorio de destino es [Gegaela1/Radivela_solicitudes_de_servicio](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio). Enlacé los PR de los requisitos en la [matriz de trazabilidad](docs/trazabilidad.md).
 
 | Hito | Rama o commit local | Estado del PR |
 |---|---|---|
-| Base del repositorio | `92f14ec` | Base de `main` prevista para el remoto |
-| Radicación | `feat/rf-04-radicacion` · `f31dca0` | Pendiente |
-| Finalización y descarga | `feat/rf-13-finalizacion` · `ef9e0a5` y `feat/rf-14-respuesta-pdf` · `7237222` | Pendientes |
-| Portal y evidencia de integración | `codex/integracion-portal` · `8f69b22` | Pendiente |
+| Base del repositorio | `92f14ec` | Base inicial de `main` |
+| Radicación | `feat/rf-04-radicacion` · `f31dca0` | [RF-04](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio/pull/4) |
+| Finalización y descarga | `feat/rf-13-finalizacion` · `ef9e0a5` y `feat/rf-14-respuesta-pdf` · `7237222` | [RF-13](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio/pull/13), [RF-14](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio/pull/14) |
+| Portal y evidencia de integración | `codex/integracion-portal` · `8f69b22` | [PR del portal](https://github.com/Gegaela1/Radivela_solicitudes_de_servicio/pull/19) |
 
 ## 9. Conclusiones y Limitaciones
 
@@ -248,5 +246,4 @@ Durante la instalación en Windows encontré que faltaba Python 3.12. El error i
 
 - La instalación verificada usa SQLite y almacenamiento de PDF en disco. Los festivos deben incorporarse al calendario local con `& $python -m scripts.calendario AAAA-MM-DD`.
 - El progreso visible representa la etapa del trámite. El tiempo y vencimiento se consultan aparte.
-- RF-19, WhatsApp, queda como ampliación opcional. El alcance actual entrega avisos en el portal.
-- Tengo pendiente publicar las ramas y abrir los PR en GitHub.
+- Probé un envío de WhatsApp desde el panel de Meta. El intento falló por una restricción de la cuenta de prueba. Dejé RF-19 como ampliación opcional y mantuve los avisos dentro del portal. [Evidencia de la prueba](evidencias/whatsapp.md)

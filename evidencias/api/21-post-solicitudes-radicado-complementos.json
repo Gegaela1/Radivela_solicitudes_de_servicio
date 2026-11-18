@@ -1,0 +1,103 @@
+[
+  {
+    "paso": 39,
+    "prueba": "PF-09",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/complementos",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/complementos",
+    "autenticada": true,
+    "entrada": {
+      "version": "4",
+      "requerimiento": "1"
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Adjunte el PDF solicitado"
+    }
+  },
+  {
+    "paso": 40,
+    "prueba": "PF-09",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/complementos",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/complementos",
+    "autenticada": true,
+    "entrada": {
+      "version": "4",
+      "requerimiento": "1"
+    },
+    "archivos": {
+      "pdf": {
+        "archivo": "texto.pdf",
+        "tipo": "application/pdf",
+        "bytes": 5,
+        "sha256": "f46e3b17a6b639e5efddc3d1498ad73491599c22220f7ef6e14772f4ee25b913"
+      }
+    },
+    "esperado": 415,
+    "obtenido": 415,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Adjunte un PDF válido"
+    }
+  },
+  {
+    "paso": 41,
+    "prueba": "PF-09",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/complementos",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/complementos",
+    "autenticada": true,
+    "entrada": {
+      "version": "4",
+      "requerimiento": "1"
+    },
+    "archivos": {
+      "pdf": {
+        "archivo": "soporte.pdf",
+        "tipo": "application/pdf",
+        "bytes": 431,
+        "sha256": "292de7b154229e0d85f3bc7f0872ef8849582f2d123af6548b6a2711d7f7be30"
+      }
+    },
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En revisión",
+      "version": 5,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  }
+]

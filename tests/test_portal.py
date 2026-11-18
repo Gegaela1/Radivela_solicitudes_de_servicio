@@ -1,8 +1,12 @@
+import json
 import os
+from contextlib import nullcontext
 from datetime import datetime, timedelta, timezone
+from hashlib import sha256
 from io import BytesIO
 from pathlib import Path
 from secrets import token_hex
+from starlette.routing import Match
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 
@@ -12,43 +16,103 @@ from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
 from pypdf import PdfWriter
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 
 @pytest.fixture(scope="module")
 def system():
-    with TemporaryDirectory() as temp, pytest.MonkeyPatch.context() as patch:
-        patch.setenv("RADIVELA_DB", str(Path(temp) / "test.sqlite"))
-        patch.setenv("RADIVELA_STORAGE", str(Path(temp) / "documentos"))
+    target = os.getenv("RADIVELA_PRUEBAS_DIR")
+    directory = nullcontext(target) if target else TemporaryDirectory()
+    with directory as temp, pytest.MonkeyPatch.context() as patch:
+        folder = Path(temp)
+        folder.mkdir(parents=True, exist_ok=True)
+        database = folder / "radivela.sqlite"
+        if database.exists():
+            pytest.fail("Selecciona una carpeta sin base de datos para la verificación.")
+        patch.setenv("RADIVELA_DB", str(database))
+        patch.setenv("RADIVELA_STORAGE", str(folder / "documentos"))
         patch.setenv("RADIVELA_SECRET", token_hex(32))
+        if target:
+            patch.setenv("RADIVELA_EVIDENCIA_HTTP", str(folder / "operaciones.json"))
         from app.config import engine
         from app.main import app
         from app.routes import Registration, create_user
 
         command.upgrade(Config("alembic.ini"), "head")
         credentials = {
-            "nombre": "Coordinación ficticia", "documento": "C-001",
-            "correo": "coord@example.com", "contrasena": "Clave de prueba démo 1",
+            "nombre": "Irene Ríos", "documento": "D-03",
+            "correo": "coord@example.com", "contrasena": fixture_password(),
         }
         with Session(engine) as db:
             create_user(db, Registration(**credentials), ["coordinacion"])
         with TestClient(app) as client:
             yield client, engine
         engine.dispose()
+        if target:
+            (folder / "operaciones.json").write_text(
+                json.dumps(operations, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+
+
+operations = []
+generated_password = token_hex(16)
+private_keys = {"contrasena", "access_token", "authorization", "hash"}
+
+
+def fixture_password():
+    return os.getenv("RADIVELA_PRUEBAS_CLAVE", generated_password)
+
+
+def without_secrets(value):
+    if isinstance(value, dict):
+        return {key: "[reservado]" if key.lower() in private_keys else without_secrets(item)
+                for key, item in value.items()}
+    if isinstance(value, list):
+        return [without_secrets(item) for item in value]
+    return value
 
 
 def operation(client, case_id, method, route, status, headers=None, **kwargs):
     url = "/api/v1" + route
     result = client.request(method, url, headers=headers, **kwargs)
+    endpoint = next(
+        (candidate.path for candidate in client.app.routes
+         if candidate.matches({"type": "http", "path": result.request.url.path,
+                               "method": method})[0] == Match.FULL),
+        url,
+    )
+    media = result.headers.get("content-type", "")
+    is_pdf = media.startswith("application/pdf")
+    body = result.content if is_pdf else result.json()
+    if os.getenv("RADIVELA_EVIDENCIA_HTTP"):
+        inputs = kwargs.get("json", kwargs.get("data", {}))
+        files = {
+            name: {"archivo": file[0], "tipo": file[2], "bytes": len(file[1]),
+                   "sha256": sha256(file[1]).hexdigest()}
+            for name, file in kwargs.get("files", {}).items()
+        }
+        operations.append({
+            "paso": len(operations) + 1, "prueba": case_id, "metodo": method,
+            "endpoint": endpoint, "solicitud": url, "autenticada": bool(headers),
+            "entrada": without_secrets(inputs), "archivos": files,
+            "esperado": status, "obtenido": result.status_code,
+            "estado_http": "Aprobada" if result.status_code == status else "Fallida",
+            "respuesta": {"tipo": media, "bytes": len(body), "sha256": sha256(body).hexdigest()}
+            if is_pdf else without_secrets(body),
+        })
     print(f"{case_id} {method} {url} HTTP {result.status_code} (esperado {status})")
     assert result.status_code == status, result.text
-    return result.content if result.headers["content-type"].startswith("application/pdf") else result.json()
+    return body
 
 
 def identity(name):
-    return {"nombre": "Persona ficticia " + name, "documento": name,
-            "correo": name + "@example.com", "contrasena": "Clave de prueba démo 1"}
+    display, document = {
+        "ana": ("Ana Solís", "D-01"),
+        "atencion": ("Darío Vega", "D-02"),
+    }.get(name, ("Persona de prueba " + name, "P-" + name))
+    return {"nombre": display, "documento": document,
+            "correo": name + "@example.com", "contrasena": fixture_password()}
 
 
 def credentials(name):
@@ -62,7 +126,7 @@ def token(client, name, test):
 
 def submission(service=1):
     return {"nombre": "Ana de prueba", "documento": "DEMO-13", "correo": "ana@example.com",
-            "servicio_id": service, "asunto": "Solicitud de demostración",
+            "servicio_id": service, "asunto": "Solicitud de orientación administrativa",
             "descripcion": "Requiero información para completar mi trámite."}
 
 
@@ -77,6 +141,7 @@ def pdf_fixture():
 def test_recorrido(system):
     client, engine = system
     call = lambda *args, **kwargs: operation(client, *args, **kwargs)
+    assert call("OP-01", "GET", "/salud", 200)["estado"] == "disponible"
     ana = call("PF-01", "POST", "/auth/registro", 201, json=identity("ana"))
     assert ana["roles"] == ["solicitante"]
     call("PF-01", "POST", "/auth/registro", 409,
@@ -89,10 +154,14 @@ def test_recorrido(system):
     expired = jwt.encode({"sub": str(ana["id"]), "exp": datetime.now(timezone.utc) - timedelta(seconds=1)},
                          os.environ["RADIVELA_SECRET"], algorithm="HS256")
     call("PF-02", "GET", "/solicitudes", 401, {"Authorization": "Bearer " + expired})
-    staff_data = {**identity("gestor"), "roles": ["atencion", "solicitante"]}
+    staff_data = {**identity("atencion"), "roles": ["atencion"]}
     call("PF-03", "POST", "/personal", 403, owner, json=staff_data)
     staff_id = call("PF-03", "POST", "/personal", 201, coord, json=staff_data)["id"]
-    handler = token(client, "gestor", "PF-03")
+    handler = token(client, "atencion", "PF-03")
+    assert staff_id in [entry["id"] for entry in call("PF-10", "GET", "/personal", 200, coord)]
+    call("PF-10", "GET", "/personal", 403, owner)
+    assert 4 in [entry["id"] for entry in call("PF-04", "GET", "/servicios", 200, owner)]
+    call("PF-04", "GET", "/servicios", 401)
 
     bad = submission()
     del bad["asunto"]
@@ -107,7 +176,7 @@ def test_recorrido(system):
     case = call("PF-05/G03", "GET", path, 200, owner)
     assert case["estado"] == "Recibida" and case["asunto"] == submission()["asunto"]
     case = call("PF-06", "PATCH", path, 200, owner,
-                json={"version": case["version"], "asunto": "Certificado ficticio"})
+                json={"version": case["version"], "asunto": "Certificado de afiliación"})
     cancellation = call("PF-07", "POST", "/solicitudes", 201, owner, json=submission())
     canceled_path = "/solicitudes/" + cancellation["radicado"]
     assert call("PF-07", "POST", canceled_path + "/cancelar", 200, owner,
@@ -158,7 +227,7 @@ def test_recorrido(system):
     notice_path = f"/avisos/{notices[0]['id']}"
     call("PF-12", "PATCH", notice_path, 404, other)
     assert call("PF-12", "PATCH", notice_path, 200, owner)["leido"]
-    data = {"version": str(case["version"]), "resultado": "expedido", "respuesta": "Certificado ficticio expedido"}
+    data = {"version": str(case["version"]), "resultado": "expedido", "respuesta": "Certificado de afiliación expedido"}
     call("PF-13", "POST", path + "/finalizacion", 422, handler,
          data={"version": case["version"], "resultado": "expedido"})
     call("PF-14", "POST", path + "/finalizacion", 422, handler, data=data)
@@ -186,13 +255,12 @@ def test_recorrido(system):
     assert case["estado"] == "En atención" and len(case["cierres"]) == 1
     case = call("PF-15", "POST", path + "/finalizacion", 200, handler,
                 data={**data, "version": case["version"], "resultado": "no_expedido"})
-    from app.routes import Closure
-    with Session(engine) as db:
-        for closure in db.scalars(select(Closure)):
-            closure.fecha -= timedelta(days=30)
-        db.commit()
-    call("PF-15", "POST", path + "/reaperturas", 409, owner,
-         json={"version": case["version"], "motivo": "Fuera del plazo"})
+    from app import routes
+    with pytest.MonkeyPatch.context() as patch:
+        future = routes.now() + timedelta(days=30)
+        patch.setattr(routes, "now", lambda: future)
+        call("PF-15", "POST", path + "/reaperturas", 409, owner,
+             json={"version": case["version"], "motivo": "Fuera del plazo"})
 
     dup = call("PF-16", "POST", "/solicitudes", 201, owner, json=submission())
     dup_path = "/solicitudes/" + dup["radicado"]
@@ -222,6 +290,12 @@ def test_recorrido(system):
         assert operation(restarted, "G11", "GET", doc_path, 200, owner) == pdf
         assert restarted.get("/").status_code == 200
         assert restarted.get("/assets/portal.js").status_code == 200
+
+    if os.getenv("RADIVELA_EVIDENCIA_HTTP"):
+        observed = {(op["metodo"], op["endpoint"]) for op in operations}
+        expected = {(method.upper(), route) for route, methods in app.openapi()["paths"].items()
+                    if route.startswith("/api/v1/") for method in methods}
+        assert observed == expected
 
 
 def test_calendario(system):

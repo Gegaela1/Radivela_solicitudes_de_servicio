@@ -18,7 +18,7 @@ Durante la entrevista confirmé que tres roles eran suficientes y que una cuenta
 
 ## Registro de levantamiento
 
-Registré las respuestas del docente en la siguiente tabla y usé el flujo descrito para definir los estados y plazos. [Capturas y resumen de Teams](../evidencias/entrevista/README.md)
+Registré las respuestas del docente en la siguiente tabla y usé el flujo descrito para definir los estados y plazos. [Capturas y resumen de Teams](../evidencias/entrevista/entrevista.md)
 
 | Ref. | Respuesta o regla levantada | Requisitos |
 |---|---|---|
