@@ -623,3 +623,18 @@ def finish(radicado: str, db: DB, actor: Actor, version: Annotated[int, Form(gt=
     commit_pdf(db, case, raw, "respuesta.pdf", closure=closure)
     return detail(db, case, actor)
 
+
+from fastapi.responses import FileResponse
+
+
+@api.get("/solicitudes/{radicado}/documentos/{document_id}")
+def download(radicado: str, document_id: int, db: DB, actor: Actor):
+    from app.config import storage
+
+    case = allowed_case(db, actor, radicado)
+    entry = db.scalar(select(Document).where(Document.id == document_id, Document.caso == case.id))
+    if not entry or not (storage / entry.clave).is_file():
+        raise HTTPException(404, "Documento no encontrado")
+    return FileResponse(storage / entry.clave, media_type="application/pdf", filename=entry.nombre,
+                        headers={"Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff"})
+
