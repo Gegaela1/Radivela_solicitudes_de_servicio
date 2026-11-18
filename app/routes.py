@@ -297,3 +297,51 @@ def own_cases(db: DB, actor: Actor, offset: int = 0, limite: int = 50):
 def get_case(radicado: str, db: DB, actor: Actor):
     return detail(db, allowed_case(db, actor, radicado), actor)
 
+
+class Version(Input):
+    version: int = Field(gt=0)
+
+
+class Correction(Version):
+    nombre: Name | None = None
+    documento: Code | None = None
+    correo: EmailStr | None = None
+    servicio_id: int | None = Field(default=None, gt=0)
+    asunto: Name | None = None
+    descripcion: Message | None = None
+
+
+def owned_case(db, radicado, actor):
+    require(actor, "solicitante")
+    case = find_case(db, radicado)
+    if case.titular != actor.id:
+        raise HTTPException(404, "Solicitud no encontrada")
+    return case
+
+
+def transition(db, case, version, expected, values):
+    states = [expected] if isinstance(expected, str) else expected
+    result = db.execute(update(Case).where(
+        Case.id == case.id, Case.version == version, Case.estado.in_(states)
+    ).values(**values, version=Case.version + 1))
+    if result.rowcount != 1:
+        raise HTTPException(409, "La solicitud cambió o su estado impide la operación")
+
+
+@api.patch("/solicitudes/{radicado}")
+def correct(radicado: str, data: Correction, db: DB, actor: Actor):
+    case = owned_case(db, radicado, actor)
+    changes = data.model_dump(exclude_unset=True, exclude={"version"})
+    if not changes or None in changes.values():
+        raise HTTPException(422, "Indique campos válidos para corregir")
+    if "servicio_id" in changes:
+        item = catalog_item(db, changes["servicio_id"])
+        if item.id != case.servicio_id:
+            changes.update(prioridad=item.prioridad, dias=item.dias)
+    transition(db, case, data.version, "Recibida", changes)
+    event(db, case, actor, "Corrección", ", ".join(
+        key for key in changes if key not in {"prioridad", "dias"}
+    ))
+    db.commit()
+    return detail(db, case, actor)
+
