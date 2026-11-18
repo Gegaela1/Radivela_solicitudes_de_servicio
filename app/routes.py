@@ -57,3 +57,68 @@ def create_user(db, data, roles):
 def register(data: Registration, db: DB):
     return create_user(db, data, ["solicitante"])
 
+
+import os
+from datetime import datetime, timedelta, timezone
+
+import jwt
+from argon2.exceptions import VerificationError
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+bearer = HTTPBearer(auto_error=False)
+dummy_hash = hasher.hash("comparación para cuentas inexistentes")
+
+
+class Login(Input):
+    correo: EmailStr
+    contrasena: Annotated[str, StringConstraints(max_length=128)]
+
+
+def secret():
+    value = os.getenv("RADIVELA_SECRET", "")
+    if len(value.encode()) < 32:
+        raise HTTPException(503, "El servicio de acceso requiere configuración")
+    return value
+
+
+def unauthorized():
+    return HTTPException(401, "Credenciales inválidas o sesión vencida",
+                         headers={"WWW-Authenticate": "Bearer"})
+
+
+@api.post("/auth/login")
+def login(data: Login, db: DB):
+    user = db.scalar(select(User).where(User.correo == data.correo.lower()))
+    try:
+        hasher.verify(user.hash if user else dummy_hash, data.contrasena)
+    except VerificationError:
+        raise unauthorized() from None
+    if not user or not user.activo:
+        raise unauthorized()
+    now = datetime.now(timezone.utc)
+    token = jwt.encode({"sub": str(user.id), "iat": now, "exp": now + timedelta(hours=1)},
+                       secret(), algorithm="HS256")
+    return {"access_token": token, "token_type": "bearer", "roles": user.roles}
+
+
+def current_user(db: DB, credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)]):
+    if not credentials:
+        raise unauthorized()
+    try:
+        payload = jwt.decode(credentials.credentials, secret(), algorithms=["HS256"],
+                             options={"require": ["sub", "exp"]})
+        user = db.get(User, int(payload["sub"]))
+    except (jwt.InvalidTokenError, ValueError):
+        raise unauthorized() from None
+    if not user or not user.activo:
+        raise unauthorized()
+    return user
+
+
+Actor = Annotated[User, Depends(current_user)]
+
+
+def require(user, *roles):
+    if not set(roles).intersection(user.roles):
+        raise HTTPException(403, "No tiene permiso para esta operación")
+
