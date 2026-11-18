@@ -1,0 +1,62 @@
+[
+  {
+    "paso": 27,
+    "prueba": "PF-07",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/cancelar",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-CDB6E328565743EC/cancelar",
+    "autenticada": true,
+    "entrada": {
+      "version": 1
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-CDB6E328565743EC",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Cancelada",
+      "version": 2,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 2,
+      "creada": "2026-11-18T15:22:41.785606-05:00",
+      "cerrada": "2026-11-18T15:22:41.818023-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Consulta sobre trámites",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-20",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 36,
+    "prueba": "PF-07",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/cancelar",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/cancelar",
+    "autenticada": true,
+    "entrada": {
+      "version": 3
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "La solicitud cambió o su estado impide la operación"
+    }
+  }
+]

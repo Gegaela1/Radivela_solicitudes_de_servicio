@@ -1,0 +1,204 @@
+[
+  {
+    "paso": 50,
+    "prueba": "PF-13",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/finalizacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/finalizacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 7,
+      "resultado": "expedido"
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": [
+        {
+          "loc": [
+            "body",
+            "respuesta"
+          ],
+          "msg": "Field required"
+        }
+      ]
+    }
+  },
+  {
+    "paso": 51,
+    "prueba": "PF-14",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/finalizacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/finalizacion",
+    "autenticada": true,
+    "entrada": {
+      "version": "7",
+      "resultado": "expedido",
+      "respuesta": "Certificado de afiliación expedido"
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Adjunte el certificado en PDF"
+    }
+  },
+  {
+    "paso": 52,
+    "prueba": "PF-13/PF-14/G09",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/finalizacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/finalizacion",
+    "autenticada": true,
+    "entrada": {
+      "version": "7",
+      "resultado": "expedido",
+      "respuesta": "Certificado de afiliación expedido"
+    },
+    "archivos": {
+      "pdf": {
+        "archivo": "certificado.pdf",
+        "tipo": "application/pdf",
+        "bytes": 431,
+        "sha256": "292de7b154229e0d85f3bc7f0872ef8849582f2d123af6548b6a2711d7f7be30"
+      }
+    },
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Finalizada",
+      "version": 8,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": "2026-11-18T15:22:42.467682-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 61,
+    "prueba": "PF-15",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/finalizacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/finalizacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 10,
+      "resultado": "no_expedido",
+      "respuesta": "Certificado de afiliación expedido"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Finalizada",
+      "version": 11,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": "2026-11-18T15:22:42.820882-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 2,
+          "fecha": "2026-11-18T15:22:42.820882-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "no_expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 1,
+            "vencida": false
+          }
+        },
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 1,
+      "vencida": false
+    }
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "paso": 67,
+    "prueba": "PF-17",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/servicios/{service_id}",
+    "solicitud": "/api/v1/servicios/1",
+    "autenticada": true,
+    "entrada": {
+      "prioridad": "Alta",
+      "dias": 3
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 68,
+    "prueba": "PF-17",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/servicios/{service_id}",
+    "solicitud": "/api/v1/servicios/1",
+    "autenticada": true,
+    "entrada": {
+      "prioridad": "Alta",
+      "dias": 3
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 1,
+      "prioridad": "Alta",
+      "dias": 3
+    }
+  }
+]

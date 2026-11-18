@@ -1,0 +1,95 @@
+[
+  {
+    "paso": 28,
+    "prueba": "PF-07",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}/historial",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-CDB6E328565743EC/historial",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "id": 3,
+        "tipo": "Radicación",
+        "fecha": "2026-11-18T15:22:41.785606-05:00",
+        "motivo": null,
+        "autor": "Ana Solís"
+      },
+      {
+        "id": 4,
+        "tipo": "Cancelación",
+        "fecha": "2026-11-18T15:22:41.823477-05:00",
+        "motivo": null,
+        "autor": "Ana Solís"
+      }
+    ]
+  },
+  {
+    "paso": 46,
+    "prueba": "PF-11/G08",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}/historial",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/historial",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "id": 1,
+        "tipo": "Radicación",
+        "fecha": "2026-11-18T15:22:41.618047-05:00",
+        "motivo": null,
+        "autor": "Ana Solís"
+      },
+      {
+        "id": 2,
+        "tipo": "Corrección",
+        "fecha": "2026-11-18T15:22:41.742554-05:00",
+        "motivo": "asunto",
+        "autor": "Ana Solís"
+      },
+      {
+        "id": 5,
+        "tipo": "Inicio de revisión",
+        "fecha": "2026-11-18T15:22:41.95406-05:00",
+        "motivo": null,
+        "autor": "Darío Vega"
+      },
+      {
+        "id": 6,
+        "tipo": "En espera de información",
+        "fecha": "2026-11-18T15:22:42.082649-05:00",
+        "motivo": "Adjunte soporte",
+        "autor": "Darío Vega"
+      },
+      {
+        "id": 7,
+        "tipo": "Complemento recibido",
+        "fecha": "2026-11-18T15:22:42.179748-05:00",
+        "motivo": null,
+        "autor": "Ana Solís"
+      },
+      {
+        "id": 8,
+        "tipo": "Aceptada",
+        "fecha": "2026-11-18T15:22:42.22857-05:00",
+        "motivo": null,
+        "autor": "Darío Vega"
+      },
+      {
+        "id": 9,
+        "tipo": "Asignación",
+        "fecha": "2026-11-18T15:22:42.320984-05:00",
+        "motivo": "Darío Vega",
+        "autor": "Irene Ríos"
+      }
+    ]
+  }
+]

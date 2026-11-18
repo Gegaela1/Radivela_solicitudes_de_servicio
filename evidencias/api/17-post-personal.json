@@ -1,0 +1,54 @@
+[
+  {
+    "paso": 11,
+    "prueba": "PF-03",
+    "metodo": "POST",
+    "endpoint": "/api/v1/personal",
+    "solicitud": "/api/v1/personal",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Darío Vega",
+      "documento": "D-02",
+      "correo": "atencion@example.com",
+      "contrasena": "[reservado]",
+      "roles": [
+        "atencion"
+      ]
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 12,
+    "prueba": "PF-03",
+    "metodo": "POST",
+    "endpoint": "/api/v1/personal",
+    "solicitud": "/api/v1/personal",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Darío Vega",
+      "documento": "D-02",
+      "correo": "atencion@example.com",
+      "contrasena": "[reservado]",
+      "roles": [
+        "atencion"
+      ]
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "id": 4,
+      "nombre": "Darío Vega",
+      "roles": [
+        "atencion"
+      ]
+    }
+  }
+]

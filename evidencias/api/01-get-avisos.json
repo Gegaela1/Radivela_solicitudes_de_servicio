@@ -1,0 +1,31 @@
+[
+  {
+    "paso": 47,
+    "prueba": "PF-12",
+    "metodo": "GET",
+    "endpoint": "/api/v1/avisos",
+    "solicitud": "/api/v1/avisos",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "id": 2,
+        "tipo": "Aceptada",
+        "fecha": "2026-11-18T15:22:42.22857-05:00",
+        "radicado": "RAD-2026-6E58B319E10E40E6",
+        "leido": false
+      },
+      {
+        "id": 1,
+        "tipo": "En espera de información",
+        "fecha": "2026-11-18T15:22:42.082649-05:00",
+        "radicado": "RAD-2026-6E58B319E10E40E6",
+        "leido": false
+      }
+    ]
+  }
+]

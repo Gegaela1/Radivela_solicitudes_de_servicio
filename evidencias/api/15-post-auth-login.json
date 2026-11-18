@@ -1,0 +1,117 @@
+[
+  {
+    "paso": 6,
+    "prueba": "PF-02",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/login",
+    "solicitud": "/api/v1/auth/login",
+    "autenticada": false,
+    "entrada": {
+      "correo": "ana@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "access_token": "[reservado]",
+      "token_type": "bearer",
+      "roles": [
+        "solicitante"
+      ],
+      "nombre": "Ana Solís"
+    }
+  },
+  {
+    "paso": 7,
+    "prueba": "PF-02",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/login",
+    "solicitud": "/api/v1/auth/login",
+    "autenticada": false,
+    "entrada": {
+      "correo": "bea@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "access_token": "[reservado]",
+      "token_type": "bearer",
+      "roles": [
+        "solicitante"
+      ],
+      "nombre": "Persona de prueba bea"
+    }
+  },
+  {
+    "paso": 8,
+    "prueba": "PF-02",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/login",
+    "solicitud": "/api/v1/auth/login",
+    "autenticada": false,
+    "entrada": {
+      "correo": "coord@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "access_token": "[reservado]",
+      "token_type": "bearer",
+      "roles": [
+        "coordinacion"
+      ],
+      "nombre": "Irene Ríos"
+    }
+  },
+  {
+    "paso": 9,
+    "prueba": "PF-02",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/login",
+    "solicitud": "/api/v1/auth/login",
+    "autenticada": false,
+    "entrada": {
+      "correo": "ana@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 401,
+    "obtenido": 401,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Credenciales inválidas o sesión vencida"
+    }
+  },
+  {
+    "paso": 13,
+    "prueba": "PF-03",
+    "metodo": "POST",
+    "endpoint": "/api/v1/auth/login",
+    "solicitud": "/api/v1/auth/login",
+    "autenticada": false,
+    "entrada": {
+      "correo": "atencion@example.com",
+      "contrasena": "[reservado]"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "access_token": "[reservado]",
+      "token_type": "bearer",
+      "roles": [
+        "atencion"
+      ],
+      "nombre": "Darío Vega"
+    }
+  }
+]

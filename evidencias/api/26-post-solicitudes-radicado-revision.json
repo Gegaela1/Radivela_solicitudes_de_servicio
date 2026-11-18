@@ -1,0 +1,83 @@
+[
+  {
+    "paso": 31,
+    "prueba": "G06",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/revision",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/revision",
+    "autenticada": true,
+    "entrada": {
+      "version": 2
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 32,
+    "prueba": "G05",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/revision",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/revision",
+    "autenticada": true,
+    "entrada": {
+      "version": 1
+    },
+    "archivos": {},
+    "esperado": 409,
+    "obtenido": 409,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "La solicitud cambió o su estado impide la operación"
+    }
+  },
+  {
+    "paso": 33,
+    "prueba": "PF-08/G05",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/revision",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/revision",
+    "autenticada": true,
+    "entrada": {
+      "version": 2
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En revisión",
+      "version": 3,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "evaluacion",
+        "duplicado"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  }
+]

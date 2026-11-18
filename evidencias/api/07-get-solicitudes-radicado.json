@@ -1,0 +1,431 @@
+[
+  {
+    "paso": 21,
+    "prueba": "PF-05",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": false,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 401,
+    "obtenido": 401,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Credenciales inválidas o sesión vencida"
+    }
+  },
+  {
+    "paso": 22,
+    "prueba": "PF-02/PF-05",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 404,
+    "obtenido": 404,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Solicitud no encontrada"
+    }
+  },
+  {
+    "paso": 23,
+    "prueba": "G04",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-INEXISTENTE",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 404,
+    "obtenido": 404,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Solicitud no encontrada"
+    }
+  },
+  {
+    "paso": 24,
+    "prueba": "PF-05/G03",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Recibida",
+      "version": 1,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "corregir",
+        "cancelar"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 34,
+    "prueba": "G07",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En revisión",
+      "version": 3,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 44,
+    "prueba": "G06",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Aceptada",
+      "version": 6,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 53,
+    "prueba": "G09",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Finalizada",
+      "version": 8,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": "2026-11-18T15:22:42.467682-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "reaperturas"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 57,
+    "prueba": "PF-15",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Finalizada",
+      "version": 9,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": "2026-11-18T15:22:42.467682-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": {
+        "id": 1,
+        "motivo": "Solicito un ajuste"
+      },
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 70,
+    "prueba": "PF-17",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E12C4C3D7154028",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E12C4C3D7154028",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Cerrada por duplicado",
+      "version": 2,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 2,
+      "creada": "2026-11-18T15:22:42.892931-05:00",
+      "cerrada": "2026-11-18T15:22:42.95139-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [],
+      "servicio": "Consulta sobre trámites",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "principal": "RAD-2026-6E58B319E10E40E6",
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-20",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 74,
+    "prueba": "G11",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes/{radicado}",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Finalizada",
+      "version": 11,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": "2026-11-18T15:22:42.820882-05:00",
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "reaperturas"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 2,
+          "fecha": "2026-11-18T15:22:42.820882-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "no_expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 1,
+            "vencida": false
+          }
+        },
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 1,
+      "vencida": false
+    }
+  }
+]

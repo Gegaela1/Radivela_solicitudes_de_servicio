@@ -4,7 +4,7 @@
 
 ## Problema y alcance
 
-La organización recibe solicitudes por correo, teléfono y WhatsApp. La información queda dispersa, lo que dificulta saber si un trámite fue recibido, quién lo atiende, qué falta y cuánto tarda. El portal centralizará la recepción, evaluación, asignación, atención, respuesta y seguimiento mediante un radicado. La organización ofrece certificados, actualización de información, solicitudes de documentos, consultas sobre trámites y peticiones generales.
+La organización recibe solicitudes por correo, teléfono y WhatsApp. La información queda dispersa, lo que dificulta saber si un trámite fue recibido, quién lo atiende, qué falta y cuánto tarda. Propuse centralizar la recepción, evaluación, asignación, atención, respuesta y seguimiento mediante un radicado. La organización ofrece certificados, actualización de información, solicitudes de documentos, consultas sobre trámites y peticiones generales.
 
 ## Actores y permisos
 
@@ -14,11 +14,13 @@ La organización recibe solicitudes por correo, teléfono y WhatsApp. La informa
 | Personal de atención | Evalúa las solicitudes. El responsable asignado tramita el caso y registra la respuesta y el resultado. |
 | Coordinación | Asigna casos, supervisa el proceso y define prioridades y tiempos por tipo de trámite. |
 
-El cliente confirmó tres roles y que una persona puede cumplir varias funciones si cuenta con los permisos. El alta de personal corresponde al administrador. Coordinación activa registra al personal.
+Durante la entrevista confirmé que tres roles eran suficientes y que una cuenta podía reunir permisos de varios roles. Asigné a coordinación el alta de personal.
 
 ## Registro de levantamiento
 
-| Ref. | Acuerdo comunicado por el cliente | Requisitos |
+Registré las respuestas del docente en la siguiente tabla y usé el flujo descrito para definir los estados y plazos. [Capturas y resumen de Teams](../evidencias/entrevista/entrevista.md)
+
+| Ref. | Respuesta o regla levantada | Requisitos |
 |---|---|---|
 | E-01 | Servicios administrativos y recorrido de un certificado, desde la solicitud hasta la respuesta y el cierre. | RF-04, RF-08, RF-10, RF-13 |
 | E-02 | Seis campos de radicación, imágenes innecesarias, generación de radicado y posibilidad de pedir información o documentos faltantes. | RF-04, RF-05, RF-08, RF-09 |
@@ -29,12 +31,10 @@ El cliente confirmó tres roles y que una persona puede cumplir varias funciones
 | E-07 | Coordinación asigna los casos. | RF-10 |
 | E-08 | El responsable registra respuesta y resultado. El solicitante puede pedir reapertura, corregir o cancelar antes de la atención. Los duplicados se cierran con justificación e historial. | RF-06, RF-07, RF-11, RF-13, RF-15, RF-16 |
 | E-09 | Coordinación define prioridad y tiempos por tipo, filtra solicitudes y consulta pendientes y tiempos de atención. | RF-17, RF-18 |
-| E-10 | La información enviada al solicitante puede ser un PDF. | RF-14 |
-| E-11 | Coordinación y el personal que gestiona los casos pueden ver la bandeja. Coordinación o la persona que gestiona el caso pueden cerrarlo por duplicado. Los certificados se pueden entregar en PDF. | RF-08, RF-14, RF-16 |
 
 ## Matriz de requisitos funcionales
 
-Los criterios incluyen propuestas donde la respuesta del cliente aún no define el detalle. Los identificadores de prueba permiten registrar evidencia de cada criterio cuando se implemente.
+Formulé los criterios de aceptación a partir de la entrevista y de las reglas de diseño. Asocié una prueba funcional a cada requisito.
 
 | ID | Función | Requisito | Criterio de aceptación | Prueba prevista | Rama propuesta |
 |---|---|---|---|---|---|
@@ -59,7 +59,7 @@ Los criterios incluyen propuestas donde la respuesta del cliente aún no define 
 
 ## Decisiones de diseño incorporadas
 
-La visibilidad de la bandeja y los actores autorizados para cerrar duplicados se definieron en la última revisión del alcance. La entrega de documentos faltantes por el portal, el PDF obligatorio cuando se expide un certificado, la decisión de reapertura por coordinación y el vínculo de duplicados del mismo titular se adoptan como reglas de diseño.
+Definí el acceso a la bandeja para coordinación y el personal de atención con permisos. Reservé el cierre por duplicado a coordinación o al responsable de gestionar el caso, y conservé el vínculo con otro radicado del mismo titular. Incorporé el envío de complementos por el portal y la entrega de respuestas en PDF. Para un certificado expedido exigí adjuntar el documento antes de finalizar. También asigné a coordinación la resolución de reaperturas.
 
 ## Requisitos no funcionales
 
@@ -85,7 +85,7 @@ La visibilidad de la bandeja y los actores autorizados para cerrar duplicados se
 
 ## Política de plazos de atención
 
-El cliente delegó la definición de plazos. Se adoptan estas metas internas iniciales de atención. Coordinación puede modificarlas por tipo de trámite para solicitudes nuevas.
+El docente me encargó definir los plazos como parte del diseño. Adopté las siguientes metas internas iniciales de atención. Coordinación puede modificarlas por tipo de trámite para solicitudes nuevas.
 
 | Tipo de trámite | Prioridad inicial | Plazo |
 |---|---|---:|

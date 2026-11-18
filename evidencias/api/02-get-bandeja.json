@@ -1,0 +1,71 @@
+[
+  {
+    "paso": 29,
+    "prueba": "PF-08",
+    "metodo": "GET",
+    "endpoint": "/api/v1/bandeja",
+    "solicitud": "/api/v1/bandeja",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "radicado": "RAD-2026-CDB6E328565743EC",
+        "servicio_id": 1,
+        "asunto": "Solicitud de orientación administrativa",
+        "estado": "Cancelada",
+        "version": 2,
+        "gestor": null,
+        "responsable": null,
+        "prioridad": "Normal",
+        "dias": 2,
+        "creada": "2026-11-18T15:22:41.785606-05:00",
+        "cerrada": "2026-11-18T15:22:41.818023-05:00"
+      },
+      {
+        "radicado": "RAD-2026-6E58B319E10E40E6",
+        "servicio_id": 4,
+        "asunto": "Certificado de afiliación",
+        "estado": "Recibida",
+        "version": 2,
+        "gestor": null,
+        "responsable": null,
+        "prioridad": "Normal",
+        "dias": 5,
+        "creada": "2026-11-18T15:22:41.610092-05:00",
+        "cerrada": null
+      }
+    ]
+  },
+  {
+    "paso": 30,
+    "prueba": "PF-08",
+    "metodo": "GET",
+    "endpoint": "/api/v1/bandeja",
+    "solicitud": "/api/v1/bandeja",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "radicado": "RAD-2026-6E58B319E10E40E6",
+        "servicio_id": 4,
+        "asunto": "Certificado de afiliación",
+        "estado": "Recibida",
+        "version": 2,
+        "gestor": null,
+        "responsable": null,
+        "prioridad": "Normal",
+        "dias": 5,
+        "creada": "2026-11-18T15:22:41.610092-05:00",
+        "cerrada": null
+      }
+    ]
+  }
+]

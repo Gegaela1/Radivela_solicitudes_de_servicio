@@ -1,0 +1,123 @@
+[
+  {
+    "paso": 37,
+    "prueba": "PF-08",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/evaluacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/evaluacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 3,
+      "decision": "rechazar"
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Indique el motivo y el tipo de complemento si aplica"
+    }
+  },
+  {
+    "paso": 38,
+    "prueba": "PF-08",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/evaluacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/evaluacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 3,
+      "decision": "requerir",
+      "motivo": "Adjunte soporte",
+      "tipo": "documento"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En espera de información",
+      "version": 4,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "duplicado"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": {
+        "id": 1,
+        "tipo": "documento",
+        "detalle": "Adjunte soporte"
+      },
+      "cierres": [],
+      "documentos": [],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": null,
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  },
+  {
+    "paso": 42,
+    "prueba": "PF-08",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes/{radicado}/evaluacion",
+    "solicitud": "/api/v1/solicitudes/RAD-2026-6E58B319E10E40E6/evaluacion",
+    "autenticada": true,
+    "entrada": {
+      "version": 5,
+      "decision": "aceptar"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "Aceptada",
+      "version": 6,
+      "gestor": 4,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "duplicado"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 0,
+      "vencida": false
+    }
+  }
+]

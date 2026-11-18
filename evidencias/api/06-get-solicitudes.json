@@ -1,0 +1,32 @@
+[
+  {
+    "paso": 10,
+    "prueba": "PF-02",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 401,
+    "obtenido": 401,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Credenciales inválidas o sesión vencida"
+    }
+  },
+  {
+    "paso": 19,
+    "prueba": "G02",
+    "metodo": "GET",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": []
+  }
+]

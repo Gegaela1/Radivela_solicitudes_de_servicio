@@ -1,0 +1,92 @@
+[
+  {
+    "paso": 59,
+    "prueba": "PF-15",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/reaperturas/{reopening_id}",
+    "solicitud": "/api/v1/reaperturas/1",
+    "autenticada": true,
+    "entrada": {
+      "version": 9,
+      "decision": "aprobar",
+      "motivo": "Procede"
+    },
+    "archivos": {},
+    "esperado": 403,
+    "obtenido": 403,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "No tiene permiso para esta operación"
+    }
+  },
+  {
+    "paso": 60,
+    "prueba": "PF-15",
+    "metodo": "PATCH",
+    "endpoint": "/api/v1/reaperturas/{reopening_id}",
+    "solicitud": "/api/v1/reaperturas/1",
+    "autenticada": true,
+    "entrada": {
+      "version": 9,
+      "decision": "aprobar",
+      "motivo": "Procede"
+    },
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Certificado de afiliación",
+      "estado": "En atención",
+      "version": 10,
+      "gestor": 4,
+      "responsable": 4,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null,
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "descripcion": "Requiero información para completar mi trámite.",
+      "acciones": [
+        "duplicado"
+      ],
+      "servicio": "Expedición de certificados",
+      "requerimiento": null,
+      "cierres": [
+        {
+          "id": 1,
+          "fecha": "2026-11-18T15:22:42.467682-05:00",
+          "respuesta": "Certificado de afiliación expedido",
+          "resultado": "expedido",
+          "tiempo": {
+            "dias_habiles": 0,
+            "vencimiento": "2026-11-25",
+            "segundos_totales": 0,
+            "vencida": false
+          }
+        }
+      ],
+      "documentos": [
+        {
+          "id": 1,
+          "nombre": "complemento.pdf",
+          "cierre_id": null
+        },
+        {
+          "id": 2,
+          "nombre": "respuesta.pdf",
+          "cierre_id": 1
+        }
+      ],
+      "reapertura": null,
+      "dias_habiles": 0,
+      "vencimiento": "2026-11-25",
+      "segundos_totales": 1,
+      "vencida": false
+    }
+  }
+]

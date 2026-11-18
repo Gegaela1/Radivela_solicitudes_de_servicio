@@ -1,0 +1,164 @@
+[
+  {
+    "paso": 18,
+    "prueba": "PF-04/G02",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "servicio_id": 1,
+      "descripcion": "Requiero información para completar mi trámite."
+    },
+    "archivos": {},
+    "esperado": 422,
+    "obtenido": 422,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": [
+        {
+          "loc": [
+            "body",
+            "asunto"
+          ],
+          "msg": "Field required"
+        }
+      ]
+    }
+  },
+  {
+    "paso": 20,
+    "prueba": "PF-04/G01",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "servicio_id": 4,
+      "asunto": "Solicitud de orientación administrativa",
+      "descripcion": "Requiero información para completar mi trámite."
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E58B319E10E40E6",
+      "servicio_id": 4,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Recibida",
+      "version": 1,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 5,
+      "creada": "2026-11-18T15:22:41.610092-05:00",
+      "cerrada": null
+    }
+  },
+  {
+    "paso": 26,
+    "prueba": "PF-07",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "descripcion": "Requiero información para completar mi trámite."
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-CDB6E328565743EC",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Recibida",
+      "version": 1,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 2,
+      "creada": "2026-11-18T15:22:41.785606-05:00",
+      "cerrada": null
+    }
+  },
+  {
+    "paso": 63,
+    "prueba": "PF-16",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "descripcion": "Requiero información para completar mi trámite."
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-6E12C4C3D7154028",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Recibida",
+      "version": 1,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Normal",
+      "dias": 2,
+      "creada": "2026-11-18T15:22:42.892931-05:00",
+      "cerrada": null
+    }
+  },
+  {
+    "paso": 69,
+    "prueba": "PF-17",
+    "metodo": "POST",
+    "endpoint": "/api/v1/solicitudes",
+    "solicitud": "/api/v1/solicitudes",
+    "autenticada": true,
+    "entrada": {
+      "nombre": "Ana de prueba",
+      "documento": "DEMO-13",
+      "correo": "ana@example.com",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "descripcion": "Requiero información para completar mi trámite."
+    },
+    "archivos": {},
+    "esperado": 201,
+    "obtenido": 201,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "radicado": "RAD-2026-E272226F8FB0435F",
+      "servicio_id": 1,
+      "asunto": "Solicitud de orientación administrativa",
+      "estado": "Recibida",
+      "version": 1,
+      "gestor": null,
+      "responsable": null,
+      "prioridad": "Alta",
+      "dias": 3,
+      "creada": "2026-11-18T15:22:43.062174-05:00",
+      "cerrada": null
+    }
+  }
+]

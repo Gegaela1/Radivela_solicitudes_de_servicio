@@ -1,0 +1,69 @@
+[
+  {
+    "paso": 16,
+    "prueba": "PF-04",
+    "metodo": "GET",
+    "endpoint": "/api/v1/servicios",
+    "solicitud": "/api/v1/servicios",
+    "autenticada": true,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 200,
+    "obtenido": 200,
+    "estado_http": "Aprobada",
+    "respuesta": [
+      {
+        "id": 1,
+        "nombre": "Consulta sobre trámites",
+        "prioridad": "Normal",
+        "dias": 2
+      },
+      {
+        "id": 2,
+        "nombre": "Actualización de información",
+        "prioridad": "Normal",
+        "dias": 3
+      },
+      {
+        "id": 3,
+        "nombre": "Solicitud de documentos",
+        "prioridad": "Normal",
+        "dias": 5
+      },
+      {
+        "id": 4,
+        "nombre": "Expedición de certificados",
+        "prioridad": "Normal",
+        "dias": 5
+      },
+      {
+        "id": 5,
+        "nombre": "Petición general",
+        "prioridad": "Normal",
+        "dias": 7
+      },
+      {
+        "id": 6,
+        "nombre": "Otro servicio",
+        "prioridad": "Normal",
+        "dias": 7
+      }
+    ]
+  },
+  {
+    "paso": 17,
+    "prueba": "PF-04",
+    "metodo": "GET",
+    "endpoint": "/api/v1/servicios",
+    "solicitud": "/api/v1/servicios",
+    "autenticada": false,
+    "entrada": {},
+    "archivos": {},
+    "esperado": 401,
+    "obtenido": 401,
+    "estado_http": "Aprobada",
+    "respuesta": {
+      "detail": "Credenciales inválidas o sesión vencida"
+    }
+  }
+]
