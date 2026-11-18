@@ -587,3 +587,39 @@ def read_notice(notice_id: int, db: DB, actor: Actor):
     db.commit()
     return {"id": entry.id, "leido": entry.leido}
 
+
+class Closure(Base):
+    __tablename__ = "cierre"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    caso: Mapped[int] = mapped_column(ForeignKey("solicitud.id"), index=True)
+    autor: Mapped[int] = mapped_column(ForeignKey("usuario.id"))
+    fecha: Mapped[datetime] = mapped_column(DateTime, default=now)
+    respuesta: Mapped[str] = mapped_column(String)
+    resultado: Mapped[str] = mapped_column(String)
+
+
+@api.post("/solicitudes/{radicado}/finalizacion")
+def finish(radicado: str, db: DB, actor: Actor, version: Annotated[int, Form(gt=0)],
+           respuesta: Annotated[Message, Form()],
+           resultado: Annotated[Literal["resuelto", "expedido", "no_expedido", "no_resuelto"], Form()],
+           pdf: Annotated[UploadFile | None, File()] = None):
+    require(actor, "atencion")
+    case = allowed_case(db, actor, radicado)
+    if case.responsable != actor.id:
+        raise HTTPException(403, "Solo el responsable puede finalizar")
+    service = db.get(Service, case.servicio_id)
+    is_certificate = service.nombre == "Expedición de certificados"
+    if is_certificate != (resultado in {"expedido", "no_expedido"}):
+        raise HTTPException(422, "Seleccione un resultado aplicable al servicio")
+    if resultado == "expedido" and not pdf:
+        raise HTTPException(422, "Adjunte el certificado en PDF")
+    raw = pdf_bytes(pdf) if pdf else None
+    closed = now()
+    transition(db, case, version, "En atención", {"estado": "Finalizada", "cerrada": closed})
+    closure = Closure(caso=case.id, autor=actor.id, fecha=closed, respuesta=respuesta,
+                      resultado=resultado)
+    db.add(closure)
+    notify(db, case, event(db, case, actor, "Finalización", resultado))
+    commit_pdf(db, case, raw, "respuesta.pdf", closure=closure)
+    return detail(db, case, actor)
+
