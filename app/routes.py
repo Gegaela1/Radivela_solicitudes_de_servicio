@@ -823,3 +823,50 @@ def timing(case, requests, reopened, excluded, observed):
             "segundos_totales": max(0, int((end - case.creada).total_seconds())),
             "vencida": due is not None and today > due}
 
+
+@api.get("/supervision")
+def supervision(db: DB, actor: Actor, estado: str | None = None, responsable: int | None = None,
+                servicio_id: int | None = None, prioridad: str | None = None,
+                desde: date | None = None, hasta: date | None = None,
+                fecha: Literal["creada", "cerrada"] = "creada",
+                offset: int = Query(0, ge=0), limite: int = Query(50, ge=1, le=100)):
+    require(actor, "coordinacion")
+    if desde and hasta and desde > hasta:
+        raise HTTPException(422, "El rango de fechas no es válido")
+    query = select(Case)
+    filters = {Case.estado: estado, Case.responsable: responsable,
+               Case.servicio_id: servicio_id, Case.prioridad: prioridad}
+    for column, value in filters.items():
+        if value is not None:
+            query = query.where(column == value)
+    time_column = Case.creada if fecha == "creada" else Case.cerrada
+    if desde:
+        query = query.where(time_column >= utc_midnight(desde))
+    if hasta:
+        query = query.where(time_column < utc_midnight(hasta + timedelta(days=1)))
+    cases = list(db.scalars(query.order_by(Case.id.desc())))
+    ids = [case.id for case in cases]
+    requests = {}
+    for entry in db.scalars(select(RequestInfo).where(RequestInfo.caso.in_(ids))):
+        requests.setdefault(entry.caso, []).append(entry)
+    approvals = dict(db.execute(select(Reopening.caso, func.max(Reopening.resuelta))
+                                .where(Reopening.caso.in_(ids), Reopening.decision == "aprobar")
+                                .group_by(Reopening.caso)).all())
+    excluded, observed = holidays(db), now()
+    rows = [{**summary(case), **timing(case, requests.get(case.id, []),
+                                        approvals.get(case.id), excluded, observed)} for case in cases]
+    open_rows = [row for row in rows if row["estado"] in ACTIVE_STATES]
+    closed_rows = [row for row in rows if row["estado"] not in ACTIVE_STATES]
+    overdue = sum(row["vencida"] for row in open_rows)
+    average = (sum(row["dias_habiles"] for row in closed_rows) / len(closed_rows)
+               if closed_rows else None)
+    return {"total": len(rows), "pendientes": len(open_rows), "vencidas": overdue,
+            "en_plazo": len(open_rows) - overdue, "promedio_dias_habiles_cerradas": average,
+            "solicitudes": rows[offset:offset + limite]}
+
+
+def utc_midnight(day):
+    return datetime.combine(day, datetime.min.time(), tzinfo=BOGOTA).astimezone(
+        timezone.utc
+    ).replace(tzinfo=None)
+
