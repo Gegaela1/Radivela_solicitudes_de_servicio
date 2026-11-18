@@ -515,3 +515,26 @@ def complement(radicado: str, db: DB, actor: Actor,
     commit_pdf(db, case, raw, "complemento.pdf", request_id=request_info.id)
     return detail(db, case, actor)
 
+
+class Assignment(Version):
+    responsable: int = Field(gt=0)
+
+
+def eligible(db, user_id):
+    user = db.get(User, user_id) if user_id else None
+    return user if user and user.activo and "atencion" in user.roles else None
+
+
+@api.post("/solicitudes/{radicado}/asignacion")
+def assign(radicado: str, data: Assignment, db: DB, actor: Actor):
+    require(actor, "coordinacion")
+    case = allowed_case(db, actor, radicado)
+    user = eligible(db, data.responsable)
+    if not user:
+        raise HTTPException(422, "El responsable debe estar habilitado para atención")
+    transition(db, case, data.version, "Aceptada",
+               {"estado": "En atención", "responsable": user.id})
+    event(db, case, actor, "Asignación", user.nombre)
+    db.commit()
+    return detail(db, case, actor)
+
