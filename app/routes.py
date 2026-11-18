@@ -249,3 +249,51 @@ def services(db: DB, actor: Actor):
     return [{"id": item.id, "nombre": item.nombre, "prioridad": item.prioridad, "dias": item.dias}
             for item in db.scalars(select(Service).where(Service.disponible).order_by(Service.id))]
 
+
+def find_case(db, radicado):
+    case = db.scalar(select(Case).where(Case.radicado == radicado.strip().upper()))
+    if not case:
+        raise HTTPException(404, "Solicitud no encontrada")
+    return case
+
+
+def allowed_case(db, actor, radicado):
+    case = find_case(db, radicado)
+    if (case.titular == actor.id or "coordinacion" in actor.roles
+            or ("atencion" in actor.roles and (
+                actor.id in (case.gestor, case.responsable) or case.estado == "Recibida"
+            ))):
+        return case
+    raise HTTPException(404, "Solicitud no encontrada")
+
+
+def detail(db, case, actor):
+    result = {**summary(case), **{key: getattr(case, key) for key in (
+        "nombre", "documento", "correo", "descripcion",
+    )}}
+    result["acciones"] = actions(db, case, actor)
+    return result
+
+
+def actions(db, case, actor):
+    return [name for name, condition in action_rules(db, case, actor).items() if condition]
+
+
+def action_rules(db, case, actor):
+    return {}
+
+
+@api.get("/solicitudes")
+def own_cases(db: DB, actor: Actor, offset: int = 0, limite: int = 50):
+    if offset < 0 or not 1 <= limite <= 100:
+        raise HTTPException(422, "Paginación inválida")
+    return [summary(case) for case in db.scalars(
+        select(Case).where(Case.titular == actor.id).order_by(Case.id.desc())
+        .offset(offset).limit(limite)
+    )]
+
+
+@api.get("/solicitudes/{radicado}")
+def get_case(radicado: str, db: DB, actor: Actor):
+    return detail(db, allowed_case(db, actor, radicado), actor)
+
