@@ -122,3 +122,26 @@ def require(user, *roles):
     if not set(roles).intersection(user.roles):
         raise HTTPException(403, "No tiene permiso para esta operación")
 
+
+from typing import Literal
+
+
+class StaffRegistration(Registration):
+    roles: set[Literal["atencion", "coordinacion", "solicitante"]]
+
+
+@api.post("/personal", status_code=201)
+def register_staff(data: StaffRegistration, db: DB, actor: Actor):
+    require(actor, "coordinacion")
+    if not data.roles.intersection({"atencion", "coordinacion"}):
+        raise HTTPException(422, "Seleccione al menos un rol interno")
+    return create_user(db, data, sorted(data.roles))
+
+
+@api.get("/personal")
+def staff(db: DB, actor: Actor):
+    require(actor, "coordinacion")
+    return [{"id": user.id, "nombre": user.nombre} for user in db.scalars(
+        select(User).where(User.activo.is_(True)).order_by(User.nombre, User.id)
+    ) if "atencion" in user.roles]
+
