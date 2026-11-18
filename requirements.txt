@@ -1,0 +1,11 @@
+fastapi==0.115.12
+uvicorn==0.34.2
+SQLAlchemy==2.0.40
+alembic==1.15.2
+PyJWT==2.10.1
+argon2-cffi==23.1.0
+python-multipart==0.0.22
+email-validator==2.2.0
+python-dotenv==1.1.0
+pypdf==6.10.2
+tzdata==2025.2
