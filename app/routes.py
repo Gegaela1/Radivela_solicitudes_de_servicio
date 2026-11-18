@@ -552,3 +552,38 @@ def history(radicado: str, db: DB, actor: Actor,
                 query.order_by(Event.fecha, Event.id).offset(offset).limit(limite)
             )]
 
+
+class Notice(Base):
+    __tablename__ = "aviso"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    destinatario: Mapped[int] = mapped_column(ForeignKey("usuario.id"), index=True)
+    evento_id: Mapped[int] = mapped_column(ForeignKey("evento.id"), unique=True)
+    leido: Mapped[bool] = mapped_column(default=False)
+
+
+def notify(db, case, entry):
+    db.flush()
+    db.add(Notice(destinatario=case.titular, evento_id=entry.id))
+
+
+@api.get("/avisos")
+def notices(db: DB, actor: Actor, offset: int = Query(0, ge=0),
+            limite: int = Query(50, ge=1, le=100)):
+    query = select(Notice, Event, Case.radicado).join(Event, Notice.evento_id == Event.id).join(
+        Case, Event.caso == Case.id
+    ).where(Notice.destinatario == actor.id).order_by(Notice.id.desc()).offset(offset).limit(limite)
+    return [{"id": notice.id, "tipo": entry.tipo, "fecha": stamp(entry.fecha),
+             "radicado": radicado, "leido": notice.leido}
+            for notice, entry, radicado in db.execute(query)]
+
+
+@api.patch("/avisos/{notice_id}")
+def read_notice(notice_id: int, db: DB, actor: Actor):
+    entry = db.scalar(select(Notice).where(Notice.id == notice_id,
+                                         Notice.destinatario == actor.id))
+    if not entry:
+        raise HTTPException(404, "Aviso no encontrado")
+    entry.leido = True
+    db.commit()
+    return {"id": entry.id, "leido": entry.leido}
+
